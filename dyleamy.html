@@ -159,31 +159,31 @@
                 <img src="./image_44fc01.jpg" alt="Amy 3D" onerror="this.src='https://placehold.co/400x600/pink/white?text=Amy+Model'" class="h-full w-auto object-contain block rounded-xl" />
             </div>
 
-            <!-- Dialogue Box -->
-            <div class="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-8 sm:right-8 bg-slate-950/95 border-2 border-slate-600 rounded-2xl p-6 shadow-2xl min-h-[200px] flex flex-col justify-between backdrop-blur-md z-20">
+            <!-- Dialogue Box (Reduced Size by ~30%) -->
+            <div class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[70%] bg-slate-950/95 border-2 border-slate-600 rounded-2xl p-4 sm:p-5 shadow-2xl min-h-[140px] flex flex-col justify-between backdrop-blur-md z-20">
                 
                 <!-- Special Action Button -->
                 <div id="special-action-container" class="absolute -top-16 right-0 z-30 hidden">
-                    <button onclick="offerDrink()" class="bg-blue-500 hover:bg-blue-400 text-white px-6 py-3 rounded-xl font-black shadow-[0_0_20px_rgba(59,130,246,0.6)] animate-bounce border-2 border-blue-200 text-lg transition-transform hover:scale-105 flex items-center gap-2">
+                    <button onclick="offerDrink()" class="bg-blue-500 hover:bg-blue-400 text-white px-5 py-2 sm:px-6 sm:py-3 rounded-xl font-black shadow-[0_0_20px_rgba(59,130,246,0.6)] animate-bounce border-2 border-blue-200 text-base sm:text-lg transition-transform hover:scale-105 flex items-center gap-2">
                         💧 Offer Water
                     </button>
                 </div>
 
                 <!-- Speaker Name -->
-                <div id="speaker-name-badge" class="hidden absolute -top-5 left-8 text-white px-6 py-1.5 rounded-lg text-sm font-bold border-2 tracking-wider shadow-lg bg-pink-600 border-pink-400">
+                <div id="speaker-name-badge" class="hidden absolute -top-4 left-6 text-white px-5 py-1 rounded-lg text-sm font-bold border-2 tracking-wider shadow-lg bg-pink-600 border-pink-400">
                     <span id="speaker-name"></span>
                 </div>
 
                 <!-- Dialogue Text -->
-                <div id="dialogue-text" class="text-slate-200 text-lg md:text-xl font-medium leading-relaxed mt-2 italic"></div>
+                <div id="dialogue-text" class="text-slate-200 text-base md:text-lg font-medium leading-relaxed mt-1 italic"></div>
 
                 <!-- Choices Container -->
-                <div class="mt-6 flex flex-col items-end w-full">
-                    <div id="choices-container" class="w-full space-y-3 mt-2 grid grid-cols-1 gap-2">
+                <div class="mt-4 flex flex-col items-end w-full">
+                    <div id="choices-container" class="w-full space-y-2 mt-2 grid grid-cols-1 gap-1">
                         <!-- Choices injected here -->
                     </div>
-                    <div id="next-btn-container" class="hidden w-full flex justify-end">
-                        <button id="next-btn" onclick="handleNext()" class="bg-pink-600 hover:bg-pink-500 text-white px-10 py-3 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(219,39,119,0.5)] flex items-center gap-2 group text-lg">
+                    <div id="next-btn-container" class="hidden w-full flex justify-end mt-2">
+                        <button id="next-btn" onclick="handleNext()" class="bg-pink-600 hover:bg-pink-500 text-white px-8 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(219,39,119,0.5)] flex items-center gap-2 group text-base sm:text-lg">
                             <span id="next-btn-text">Next</span> <span class="group-hover:translate-x-1 transition-transform">&#9654;</span>
                         </button>
                     </div>
@@ -529,9 +529,9 @@
                 speakerBadge.classList.remove('hidden');
                 document.getElementById('speaker-name').innerText = data.speaker;
                 if (data.speaker === 'You') {
-                    speakerBadge.className = "absolute -top-5 left-8 text-white px-6 py-1.5 rounded-lg text-sm font-bold border-2 tracking-wider shadow-lg bg-indigo-600 border-indigo-400";
+                    speakerBadge.className = "absolute -top-4 left-6 text-white px-5 py-1 rounded-lg text-sm font-bold border-2 tracking-wider shadow-lg bg-indigo-600 border-indigo-400";
                 } else {
-                    speakerBadge.className = "absolute -top-5 left-8 text-white px-6 py-1.5 rounded-lg text-sm font-bold border-2 tracking-wider shadow-lg bg-pink-600 border-pink-400";
+                    speakerBadge.className = "absolute -top-4 left-6 text-white px-5 py-1 rounded-lg text-sm font-bold border-2 tracking-wider shadow-lg bg-pink-600 border-pink-400";
                 }
             } else {
                 speakerBadge.classList.add('hidden');
@@ -565,11 +565,11 @@
                     const btn = document.createElement('button');
                     
                     if (isLocked) {
-                        btn.className = "w-full text-left px-6 py-4 rounded-xl transition-all duration-200 border shadow-md font-medium text-lg bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed";
+                        btn.className = "w-full text-left px-4 py-3 sm:px-5 sm:py-3 rounded-xl transition-all duration-200 border shadow-md font-medium text-base sm:text-lg bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed";
                         btn.innerHTML = `${choice.text} <span class="text-yellow-500 ml-2">(🔒 Requires ${choice.requireItem})</span>`;
                         btn.disabled = true;
                     } else {
-                        btn.className = "w-full text-left px-6 py-4 rounded-xl transition-all duration-200 border shadow-md font-medium text-lg bg-slate-800/80 hover:bg-pink-600/90 text-slate-200 hover:text-white border-slate-600 hover:border-pink-300 hover:pl-8";
+                        btn.className = "w-full text-left px-4 py-3 sm:px-5 sm:py-3 rounded-xl transition-all duration-200 border shadow-md font-medium text-base sm:text-lg bg-slate-800/80 hover:bg-pink-600/90 text-slate-200 hover:text-white border-slate-600 hover:border-pink-300 hover:pl-6";
                         btn.innerText = choice.text;
                         btn.onclick = () => handleChoice(choice);
                     }
@@ -579,13 +579,13 @@
                 choicesContainer.classList.add('hidden');
                 nextContainer.classList.remove('hidden');
                 nextBtnText.innerText = "Complete Episode";
-                nextBtn.className = "bg-yellow-500 hover:bg-yellow-400 text-slate-900 px-10 py-3 rounded-xl font-black transition-all shadow-[0_0_15px_rgba(234,179,8,0.5)] animate-pulse text-lg";
+                nextBtn.className = "bg-yellow-500 hover:bg-yellow-400 text-slate-900 px-8 py-2 rounded-xl font-black transition-all shadow-[0_0_15px_rgba(234,179,8,0.5)] animate-pulse text-base sm:text-lg";
                 nextBtn.onclick = () => endGame();
             } else {
                 choicesContainer.classList.add('hidden');
                 nextContainer.classList.remove('hidden');
                 nextBtnText.innerText = data.next === 'RETURN' ? 'Return to Conversation' : 'Next';
-                nextBtn.className = "bg-pink-600 hover:bg-pink-500 text-white px-10 py-3 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(219,39,119,0.5)] flex items-center gap-2 group text-lg";
+                nextBtn.className = "bg-pink-600 hover:bg-pink-500 text-white px-8 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(219,39,119,0.5)] flex items-center gap-2 group text-base sm:text-lg";
                 nextBtn.onclick = () => {
                     if (data.next === 'RETURN') {
                         currentNode = previousNode;
