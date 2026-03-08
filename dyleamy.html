@@ -212,7 +212,7 @@
 
         <!-- ================= MODALS ================= -->
 
-        <!-- Skill Check Mini-game Modal -->
+        <!-- Linear Skill Check Mini-game Modal (Hacking) -->
         <div id="skill-check-modal" class="hidden absolute inset-0 z-[110] bg-slate-950/90 backdrop-blur-sm flex-col items-center justify-center fade-in">
             <h2 class="text-3xl md:text-4xl font-black text-white mb-2 tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">SECURITY LATCH BYPASS</h2>
             <div class="text-xl md:text-2xl text-blue-400 font-bold mb-8">Latches Cleared: <span id="skill-progress" class="text-white font-black">0</span> / 10</div>
@@ -228,6 +228,26 @@
                 HIT (Spacebar)
             </button>
             <p class="text-slate-400 mt-6 font-bold uppercase tracking-widest animate-pulse text-sm text-center px-4">Press when the line is inside the green zone!<br>Missing resets the entire lock.</p>
+        </div>
+
+        <!-- Circular Skill Check Mini-game Modal (Fishing) -->
+        <div id="skill-check-circle-modal" class="hidden absolute inset-0 z-[110] bg-slate-950/90 backdrop-blur-sm flex-col items-center justify-center fade-in">
+            <h2 class="text-3xl md:text-4xl font-black text-white mb-2 tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">FISHING PROBE</h2>
+            <div class="text-xl md:text-2xl text-purple-400 font-bold mb-8">Successful Reels: <span id="circle-skill-progress" class="text-white font-black">0</span> / 3</div>
+            
+            <div class="relative w-64 h-64 rounded-full bg-slate-800 border-8 border-slate-600 shadow-[0_0_30px_rgba(0,0,0,0.8)] mb-8">
+                <!-- Track for Target -->
+                <div id="circle-track" class="absolute inset-0 rounded-full"></div>
+                <!-- Center Pivot point -->
+                <div class="absolute top-1/2 left-1/2 w-4 h-4 bg-slate-400 rounded-full -translate-x-1/2 -translate-y-1/2 z-10"></div>
+                <!-- Rotating Cursor Needle -->
+                <div id="circle-cursor" class="absolute top-0 left-1/2 w-1 h-[50%] bg-white rounded-t-full origin-bottom shadow-[0_0_15px_rgba(255,255,255,1)]" style="transform: translateX(-50%) rotate(0deg);"></div>
+            </div>
+            
+            <button onclick="hitCircleSkillCheck()" class="bg-purple-600 hover:bg-purple-500 text-white px-12 py-4 rounded-2xl font-black text-2xl shadow-[0_0_20px_rgba(168,85,247,0.8)] transition-transform hover:scale-105 active:scale-95 border-2 border-purple-400">
+                REEL IN (Spacebar)
+            </button>
+            <p class="text-slate-400 mt-6 font-bold uppercase tracking-widest animate-pulse text-sm text-center px-4">Press when the needle is inside the green zone!<br>Timing is slightly slower than hacking.</p>
         </div>
 
         <!-- Shop Modal -->
@@ -301,7 +321,7 @@
         let diaries = [];
         let profileUnlocked = false;
 
-        // Skill Check Variables
+        // Linear Skill Check Variables (Hacking)
         let skillAnimFrame;
         let cursorPosition = 0;
         let cursorDirection = 1;
@@ -310,15 +330,21 @@
         let currentSkillTargetWidth = 20;
         let skillHits = 0;
 
+        // Circular Skill Check Variables (Fishing)
+        let circAnimFrame;
+        let circAngle = 0;
+        let circSpeed = 2.0; // Slower than linear bar
+        let circTargetStart = 0;
+        let circTargetSize = 50; 
+        let circHits = 0;
+
         // Initialize Menu Data
         function initMenu() {
-            // Check storage for mina unlock status
             const savedUnlock = localStorage.getItem('campOhioMinaUnlocked');
             if (savedUnlock === 'true') {
                 minaUnlocked = true;
             }
 
-            // Update UI based on unlock
             const minaLockedOverlay = document.getElementById('mina-locked');
             if (minaUnlocked) {
                 minaLockedOverlay.classList.add('hidden');
@@ -394,6 +420,7 @@
             { id: 'Water Bottle', price: 5, desc: 'A refreshing drink. Good for making friends.' },
             { id: 'Screwdriver', price: 10, desc: 'Essential for taking apart electronics.' },
             { id: 'Strings', price: 15, desc: 'High-tension string. Needed to build a kite.' },
+            { id: 'Fishing Rod', price: 17, desc: 'A sturdy fiberglass rod. Good for catching... things.' },
             { id: 'Binoculars', price: 25, desc: 'Essential for long-distance stakeouts.' },
             { id: 'Secret Diary', price: 30, desc: 'Unlocks a special note in your Diary menu.' }
         ];
@@ -551,14 +578,38 @@
             mina_c1_a: { speaker: "Mina", text: "Everything here is a monster, genius. I'm Mina. And you're currently standing on my dock.", next: "mina_node3" },
             mina_c1_b: { speaker: "Mina", text: "Thanks. Good for kicking alien teeth in. I'm Mina.", next: "mina_node3" },
             mina_c1_c: { speaker: "Mina", text: "Good luck with that. The perimeter is fenced with some invisible sci-fi nonsense. I'm Mina, by the way.", next: "mina_node3" },
-            mina_node3: { speaker: "Mina", text: "I've been sabotaging the camp's audio speakers so they can't broadcast their subliminal junk. But I dropped my multi-tool in the lake.", next: "mina_choice2" },
-            mina_choice2: { speaker: "You", text: "(Do I help her?)", choices: [
-                { text: "I can try to fish it out for you.", next: "mina_c2_a", scoreChange: 20, coinChange: 5 },
-                { text: "That sounds like a 'you' problem.", next: "mina_c2_b", scoreChange: -15 }
-            ]},
-            mina_c2_a: { speaker: "Mina", text: "Brave. Stupid, but brave. Don't touch the glowing algae.", next: "mina_end" },
-            mina_c2_b: { speaker: "Mina", text: "Whatever. Stay out of my way then, sheep.", next: "mina_end" },
-            mina_end: { speaker: "Mina", text: "If you want to survive the summer, stick with me. We're going to burn this synthetic camp to the ground.", end: true },
+            mina_node3: { speaker: "Mina", text: "I've been sabotaging the camp's audio speakers so they can't broadcast their subliminal junk. But I dropped my multi-tool in the lake.", next: "mina_hub" },
+            
+            mina_hub: { 
+                speaker: "", text: "You need to buy a Fishing Rod from the shop (17 Coins) to retrieve her multi-tool.", 
+                choices: [
+                    { text: "Retrieve Tool (Skill Check)", next: "mina_fish_prep", requireItem: "Fishing Rod" },
+                    { text: "Search the dock for coins", next: "mina_grind1" }
+                ]
+            },
+            mina_grind1: {
+                speaker: "", text: "You search the slimy wooden planks of the dock.",
+                choices: [
+                    { text: "Keep searching", next: "mina_grind2", coinChange: 4 },
+                    { text: "Return", next: "mina_hub", coinChange: 5 }
+                ]
+            },
+            mina_grind2: {
+                speaker: "", text: "You look inside an empty bait bucket. Found some loose change.",
+                choices: [
+                    { text: "Return", next: "mina_hub", coinChange: 8 }
+                ]
+            },
+            mina_fish_prep: { speaker: "Mina", text: "You got a rod? Good. Now cast it right near that patch of glowing algae. Don't mess up.", next: "mina_trigger" },
+            mina_trigger: {
+                speaker: "", text: "Get ready for the Fishing Probe Skill Check. Press SPACEBAR when the needle is inside the green zone!",
+                specialAction: "startCircleSkillCheck"
+            },
+            mina_success: { speaker: "Mina", text: "You actually got it! ...Ew, it's covered in that glowing slime. Thanks, I guess.", unlockProfile: true, next: "mina_roommate" },
+            mina_fail: { speaker: "Mina", text: "You dropped it back in! Ugh, focus! Try again.", next: "mina_trigger" },
+            mina_roommate: { speaker: "Mina", text: "This place is driving me crazy. My roommate, Amy, is literally insane. She covers the walls in red string and won't stop muttering about 'biomass'.", next: "mina_end" },
+            mina_end: { speaker: "Mina", text: "Anyway, if you want to survive the summer, stick with me. We're going to burn this synthetic camp to the ground.", end: true },
+            
             mina_drink_thanks: { speaker: "Mina", text: "Water? Thanks. Was getting tired of the 'electrolyte punch' they serve. It tastes like battery acid.", next: "RETURN" }
         };
 
@@ -620,17 +671,13 @@
                 if(nextBtn) nextBtn.classList.replace('hover:bg-pink-500', 'hover:bg-purple-500');
             }
 
-            // Profile logic
-            if (friendScore >= 75 && !profileUnlocked) {
-                profileUnlocked = true;
+            // Profile Logic (Persists once unlocked)
+            if (friendScore >= 75) profileUnlocked = true;
+            
+            if (profileUnlocked) {
                 document.getElementById('profile-btn-container').classList.remove('hidden');
-                const charName = currentRoute === 'amy' ? 'Amy' : 'Mina';
-                showNotification(`🎉 ${charName}'s Profile Unlocked! Check your menu.`);
-            } else if (friendScore < 75) {
-                profileUnlocked = false;
+            } else {
                 document.getElementById('profile-btn-container').classList.add('hidden');
-            } else if (profileUnlocked) {
-                document.getElementById('profile-btn-container').classList.remove('hidden');
             }
         }
 
@@ -647,9 +694,12 @@
                 spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/purple/white?text=Mina'");
             }
             
-            // Dynamic Backgrounds
+            // Dynamic Backgrounds and Diary Unlocks
             if (currentNode.startsWith('mina')) {
-                bgElement.src = "./bg_mina.jpg";
+                bgElement.src = "./bg_min.jpg";
+                if (currentNode === 'mina_end') {
+                    unlockDiary(7, "Diary #7: Mina & The Pond", "I helped Mina fish her multi-tool out of the pond. The algae was glowing. Also, she's Amy's roommate, which explains a lot. She seems incredibly annoyed by her.");
+                }
             } else if (currentNode.startsWith('start') || currentNode.startsWith('node') || currentNode.startsWith('c1') || currentNode.startsWith('c2') || currentNode.startsWith('c3') || currentNode.startsWith('c4')) {
                 bgElement.src = "./bg_camp.jpg";
             } else if (currentNode === 'ep2_start') {
@@ -691,6 +741,15 @@
 
         function renderNode() {
             const data = STORY[currentNode];
+            
+            // Handle Forced Profile Unlock (Mina Route)
+            if (data.unlockProfile && !profileUnlocked) {
+                profileUnlocked = true;
+                const charName = currentRoute === 'amy' ? 'Amy' : 'Mina';
+                showNotification(`🎉 ${charName}'s Profile Unlocked! Check your menu.`);
+                updateHUD();
+            }
+
             checkBackgroundAndDiaries();
 
             // Set Sprite Style
@@ -766,6 +825,12 @@
                 nextBtnText.innerText = "Start Hacking!";
                 nextBtn.className = "bg-blue-600 hover:bg-blue-500 text-white px-8 py-2 rounded-xl font-black transition-all shadow-[0_0_20px_rgba(37,99,235,0.8)] animate-pulse text-base flex items-center gap-2";
                 nextBtn.onclick = () => { startSkillCheck(); };
+            } else if (data.specialAction === 'startCircleSkillCheck') {
+                choicesContainer.classList.add('hidden');
+                nextContainer.classList.remove('hidden');
+                nextBtnText.innerText = "Cast Line!";
+                nextBtn.className = "bg-purple-600 hover:bg-purple-500 text-white px-8 py-2 rounded-xl font-black transition-all shadow-[0_0_20px_rgba(168,85,247,0.8)] animate-pulse text-base flex items-center gap-2";
+                nextBtn.onclick = () => { startCircleSkillCheck(); };
             } else if (data.end) {
                 choicesContainer.classList.add('hidden');
                 nextContainer.classList.remove('hidden');
@@ -818,7 +883,7 @@
             }
         }
 
-        // ================= SKILL CHECK MINI-GAME ================= //
+        // ================= LINEAR SKILL CHECK (Hacking) ================= //
         function startSkillCheck() {
             document.getElementById('skill-check-modal').classList.remove('hidden');
             document.getElementById('skill-check-modal').classList.add('flex');
@@ -900,6 +965,86 @@
             renderNode();
         }
 
+
+        // ================= CIRCULAR SKILL CHECK (Fishing) ================= //
+        function startCircleSkillCheck() {
+            document.getElementById('skill-check-circle-modal').classList.remove('hidden');
+            document.getElementById('skill-check-circle-modal').classList.add('flex');
+            circHits = 0;
+            circSpeed = 2.0; // Slower timing as requested
+            updateCircleSkillUI();
+            resetCircleSkillRound();
+            animateCircleSkillCheck();
+        }
+
+        function resetCircleSkillRound() {
+            circTargetSize = Math.max(30, 60 - (circHits * 10)); // target shrinks each time
+            circTargetStart = 20 + Math.random() * (340 - circTargetSize - 40); // random position
+            circAngle = 0;
+            drawCircleTrack();
+        }
+
+        function drawCircleTrack() {
+            const track = document.getElementById('circle-track');
+            track.style.background = `conic-gradient(from 0deg, transparent 0deg, transparent ${circTargetStart}deg, #22c55e ${circTargetStart}deg, #22c55e ${circTargetStart + circTargetSize}deg, transparent ${circTargetStart + circTargetSize}deg, transparent 360deg)`;
+        }
+
+        function animateCircleSkillCheck() {
+            circAngle += circSpeed;
+            if (circAngle >= 360) circAngle -= 360;
+            
+            document.getElementById('circle-cursor').style.transform = `translateX(-50%) rotate(${circAngle}deg)`;
+            circAnimFrame = requestAnimationFrame(animateCircleSkillCheck);
+        }
+
+        function hitCircleSkillCheck() {
+            // Check if current angle falls inside the target wedge
+            if (circAngle >= circTargetStart && circAngle <= (circTargetStart + circTargetSize)) {
+                circHits++;
+                coins += 5;
+                updateCircleSkillUI();
+                updateHUD();
+                
+                if (circHits >= 3) { // Require 3 successful reels
+                    winCircleSkillCheck();
+                } else {
+                    showScorePopup("GOOD REEL! +5 Coins", true);
+                    resetCircleSkillRound();
+                }
+            } else {
+                failCircleSkillCheck();
+            }
+        }
+
+        function updateCircleSkillUI() {
+            document.getElementById('circle-skill-progress').innerText = circHits;
+        }
+
+        function winCircleSkillCheck() {
+            cancelAnimationFrame(circAnimFrame);
+            document.getElementById('skill-check-circle-modal').classList.add('hidden');
+            document.getElementById('skill-check-circle-modal').classList.remove('flex');
+            
+            friendScore = Math.min(100, friendScore + 20);
+            showScorePopup("SUCCESS! +20% Friendship", true);
+            updateHUD();
+            
+            currentNode = 'mina_success';
+            renderNode();
+        }
+
+        function failCircleSkillCheck() {
+            cancelAnimationFrame(circAnimFrame);
+            document.getElementById('skill-check-circle-modal').classList.add('hidden');
+            document.getElementById('skill-check-circle-modal').classList.remove('flex');
+            
+            showScorePopup("FAILED! Tool sank deeper...", false);
+            currentNode = 'mina_fail';
+            renderNode();
+        }
+
+
+        // ================= GENERAL SYSTEMS ================= //
         function offerDrink() {
             friendScore = Math.min(100, friendScore + 10);
             inventory = inventory.filter(i => i !== 'Water Bottle');
@@ -1033,7 +1178,7 @@
                 document.getElementById('prof-img').src = "./image_44fc01.jpg";
                 document.getElementById('prof-name').innerText = "Amy";
                 document.getElementById('prof-loc').innerText = "Cabin 5";
-                document.getElementById('prof-traits').innerText = "Paranoid, brilliant, highly observant.";
+                document.getElementById('prof-traits').innerHTML = "Paranoid, brilliant, highly observant.";
                 document.getElementById('prof-secret-box').className = "bg-slate-800 p-4 rounded-xl border-l-4 border-pink-500 mt-4 shadow-inner";
                 document.getElementById('prof-secret-title').innerText = "Amy's Secret Sidenote:";
                 document.getElementById('prof-secret-title').className = "text-sm font-bold text-pink-400 uppercase tracking-widest mb-2";
@@ -1044,7 +1189,7 @@
                 document.getElementById('prof-img').src = "./mina.jpg";
                 document.getElementById('prof-name').innerText = "Mina Monroe";
                 document.getElementById('prof-loc').innerText = "Old Boathouse";
-                document.getElementById('prof-traits').innerText = "Rebellious, goth, incredibly sarcastic.";
+                document.getElementById('prof-traits').innerHTML = "Rebellious, goth, incredibly sarcastic.<br><br><strong class='text-purple-300'>Relationships:</strong> Amy (Roommate - <em class='text-slate-400'>Slightly Annoyed</em>)";
                 document.getElementById('prof-secret-box').className = "bg-slate-800 p-4 rounded-xl border-l-4 border-purple-500 mt-4 shadow-inner";
                 document.getElementById('prof-secret-title').innerText = "Mina's Secret Sidenote:";
                 document.getElementById('prof-secret-title').className = "text-sm font-bold text-purple-400 uppercase tracking-widest mb-2";
@@ -1063,12 +1208,22 @@
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 e.preventDefault();
+                
+                // Route to correct minigame if active
                 const skillModal = document.getElementById('skill-check-modal');
+                const circleModal = document.getElementById('skill-check-circle-modal');
+                
                 if (!skillModal.classList.contains('hidden')) {
                     hitSkillCheck();
                     return; 
                 }
+                
+                if (!circleModal.classList.contains('hidden')) {
+                    hitCircleSkillCheck();
+                    return;
+                }
 
+                // Route to Diary logic
                 const diaryModal = document.getElementById('diary-modal');
                 if (diaryModal.classList.contains('hidden')) {
                     if (!document.getElementById('game-screen').classList.contains('hidden') || !document.getElementById('end-screen').classList.contains('hidden')) {
