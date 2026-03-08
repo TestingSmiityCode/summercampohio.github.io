@@ -73,9 +73,9 @@
                 <div id="mina-card" class="bg-slate-900/90 p-6 rounded-3xl border-2 border-purple-500/40 flex flex-col items-center shadow-[0_0_30px_rgba(168,85,247,0.15)] w-64 relative overflow-hidden">
                     
                     <!-- Locked Overlay -->
-                    <div id="mina-locked" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center text-center p-4">
+                    <div id="mina-locked" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center text-center p-4 cursor-not-allowed">
                         <span class="text-5xl mb-3">🔒</span>
-                        <span class="text-purple-400 font-bold text-sm uppercase tracking-widest">Complete Amy's<br>Episode 3<br>To Unlock</span>
+                        <span class="text-purple-400 font-bold text-sm uppercase tracking-widest">Complete Amy's<br>Episode 2<br>To Unlock</span>
                     </div>
 
                     <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-purple-500 mb-4 bg-slate-800">
@@ -89,9 +89,16 @@
                 </div>
             </div>
 
-            <div class="relative z-10 mt-10">
-                <button onclick="loadGame()" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 font-bold py-3 px-10 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:border-emerald-400">
-                    📂 Load Saved Game
+            <!-- Home Screen Action Buttons -->
+            <div class="relative z-10 mt-10 flex flex-wrap justify-center gap-4">
+                <button onclick="loadGame()" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 font-bold py-3 px-8 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:border-emerald-400">
+                    📂 Load Game
+                </button>
+                <button onclick="openProfileGallery()" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 font-bold py-3 px-8 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:border-indigo-400">
+                    👥 Profiles
+                </button>
+                <button onclick="clearSave()" class="bg-slate-800 hover:bg-red-900/50 text-slate-400 border-2 border-slate-700 font-bold py-3 px-6 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:text-red-400 hover:border-red-500">
+                    🗑️ Clear Save
                 </button>
             </div>
         </div>
@@ -282,7 +289,19 @@
             </div>
         </div>
 
-        <!-- Profile Modal -->
+        <!-- Profile Gallery Modal (Home Screen) -->
+        <div id="profile-gallery-modal" class="hidden absolute inset-0 z-[85] bg-black/80 backdrop-blur-md items-center justify-center p-6 fade-in">
+            <div class="bg-slate-900 border-4 border-indigo-500 rounded-3xl p-8 w-full max-w-3xl shadow-[0_0_50px_rgba(99,102,241,0.5)] relative flex flex-col max-h-[90vh]">
+                <button onclick="closeProfileGallery()" class="absolute top-6 right-6 text-slate-400 hover:text-white text-4xl font-bold">&times;</button>
+                <h2 class="text-4xl font-black text-white mb-8 border-b-2 border-slate-700 pb-4">Character Gallery</h2>
+                
+                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-3 gap-6 overflow-y-auto pr-2 pb-2">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Specific Profile Details Modal -->
         <div id="profile-modal" class="hidden absolute inset-0 z-[90] bg-black/80 flex items-center justify-center p-6 backdrop-blur-md fade-in">
             <div id="profile-modal-box" class="bg-slate-900 border-4 border-pink-500 text-slate-200 w-full max-w-2xl rounded-3xl p-8 shadow-[0_0_50px_rgba(236,72,153,0.5)] relative">
                <button onclick="closeProfile()" class="absolute top-6 right-6 text-slate-400 hover:text-white text-4xl font-bold">&times;</button>
@@ -312,6 +331,7 @@
         // Global Game State
         let currentRoute = 'amy';
         let minaUnlocked = false;
+        let unlockedProfiles = [];
 
         let currentNode = 'start';
         let previousNode = null;
@@ -319,7 +339,6 @@
         let coins = 0;
         let inventory = [];
         let diaries = [];
-        let profileUnlocked = false;
 
         // Linear Skill Check Variables (Hacking)
         let skillAnimFrame;
@@ -333,16 +352,23 @@
         // Circular Skill Check Variables (Fishing)
         let circAnimFrame;
         let circAngle = 0;
-        let circSpeed = 2.0; // Slower than linear bar
+        let circSpeed = 2.0;
         let circTargetStart = 0;
         let circTargetSize = 50; 
         let circHits = 0;
 
         // Initialize Menu Data
         function initMenu() {
+            // Load Mina's route status
             const savedUnlock = localStorage.getItem('campOhioMinaUnlocked');
             if (savedUnlock === 'true') {
                 minaUnlocked = true;
+            }
+            
+            // Load Unlocked Character Profiles
+            const savedProfiles = localStorage.getItem('campOhioProfiles');
+            if (savedProfiles) {
+                unlockedProfiles = JSON.parse(savedProfiles);
             }
 
             const minaLockedOverlay = document.getElementById('mina-locked');
@@ -350,6 +376,16 @@
                 minaLockedOverlay.classList.add('hidden');
             } else {
                 minaLockedOverlay.classList.remove('hidden');
+            }
+        }
+
+        // Global Profile Unlock Function
+        function unlockGlobalProfile(charId) {
+            if (!unlockedProfiles.includes(charId)) {
+                unlockedProfiles.push(charId);
+                localStorage.setItem('campOhioProfiles', JSON.stringify(unlockedProfiles));
+                const charName = charId === 'amy' ? 'Amy' : 'Mina';
+                showNotification(`🎉 ${charName}'s Profile Unlocked! Check the gallery.`);
             }
         }
 
@@ -361,8 +397,7 @@
                 friendScore,
                 coins,
                 inventory,
-                diaries,
-                profileUnlocked
+                diaries
             };
             localStorage.setItem('campOhioSaveData', JSON.stringify(saveState));
             showNotification("💾 Game Progress Saved Successfully!");
@@ -379,7 +414,11 @@
                     coins = state.coins || 0;
                     inventory = state.inventory || [];
                     diaries = state.diaries || [];
-                    profileUnlocked = state.profileUnlocked || false;
+
+                    // Legacy profile state check (for older saves)
+                    if (state.profileUnlocked && !unlockedProfiles.includes(currentRoute)) {
+                        unlockGlobalProfile(currentRoute);
+                    }
 
                     showScreen('game-screen');
                     updateHUD();
@@ -393,6 +432,17 @@
             }
         }
 
+        function clearSave() {
+            localStorage.removeItem('campOhioSaveData');
+            localStorage.removeItem('campOhioMinaUnlocked');
+            localStorage.removeItem('campOhioProfiles');
+            minaUnlocked = false;
+            unlockedProfiles = [];
+            
+            showNotification("🗑️ Save data and Unlocks cleared! Refreshing...");
+            setTimeout(() => { window.location.reload(); }, 1500);
+        }
+
         function goHome() {
             showScreen('start-screen');
             initMenu();
@@ -400,6 +450,12 @@
 
         // Start Specific Route
         function startRoute(routeStr) {
+            // Strong Guard to prevent bypassing via DOM manipulation
+            if (routeStr === 'mina' && !minaUnlocked) {
+                showNotification("🔒 Complete Amy's Episode 2 to unlock Mina!");
+                return; 
+            }
+
             currentRoute = routeStr;
             currentNode = (routeStr === 'amy') ? 'start' : 'mina_start';
             
@@ -408,7 +464,6 @@
             coins = 0;
             inventory = [];
             diaries = [];
-            profileUnlocked = false;
             
             updateHUD();
             renderNode();
@@ -427,7 +482,6 @@
 
         const STORY = {
             // ================= AMY ROUTE =================
-            // === EPISODE 1 ===
             start: { speaker: "", text: "The bus ride to 'Summer Camp Ohio' felt much longer than the brochure suggested. The pamphlet promised sunshine, archery, and lifelong friendships. But as you step off the bus, the sky is a sickly, unyielding grey.", next: "start2" },
             start2: { speaker: "", text: "The woods surrounding the camp feel unnaturally quiet. No birds are singing. No wind rustles the leaves. In fact, the leaves look a bit too glossy, almost like they're made of cheap plastic.", next: "start3" },
             start3: { speaker: "", text: "You carry your heavy duffel bag towards the cabins. The counselors standing by the entrance have wide, unblinking smiles that don't quite reach their eyes. They wave at the campers in perfect, terrifying synchronization.", next: "node2" },
@@ -562,7 +616,7 @@
                 speaker: "", text: "Get ready for the Skill Check. Press SPACEBAR when the moving line is inside the green zone!",
                 specialAction: "startSkillCheck"
             },
-            ep4_success: { speaker: "Amy", text: "You did it! The final latch popped open! I can't believe you actually pulled that off.", next: "ep4_end" },
+            ep4_success: { speaker: "Amy", text: "You did it! The final latch popped open! I can't believe you actually pulled that off.", unlockProfile: true, next: "ep4_end" },
             ep4_end: { speaker: "Amy", text: "This data drive has exactly what we need. We're going to blow the lid off this entire camp.", end: true },
 
             drink_thanks: { speaker: "Amy", text: "*Gulp, gulp*... Ahh! Thank you so much! I was getting incredibly parched. I owe you one.", next: "RETURN" },
@@ -663,6 +717,12 @@
                 profileBtn.className = "bg-pink-700 hover:bg-pink-600 text-white px-5 py-2 w-full rounded-xl font-bold border border-pink-400 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105";
                 if(nextBtn) nextBtn.classList.replace('bg-purple-600', 'bg-pink-600');
                 if(nextBtn) nextBtn.classList.replace('hover:bg-purple-500', 'hover:bg-pink-500');
+                
+                // Amy Friendship Profile Unlock Logic
+                if (friendScore >= 75) {
+                    unlockGlobalProfile('amy');
+                }
+
             } else {
                 friendLabel.className = "text-purple-400 uppercase text-sm";
                 friendBar.className = "bg-gradient-to-r from-purple-600 to-purple-400 h-full transition-all duration-700 ease-out";
@@ -671,10 +731,8 @@
                 if(nextBtn) nextBtn.classList.replace('hover:bg-pink-500', 'hover:bg-purple-500');
             }
 
-            // Profile Logic (Persists once unlocked)
-            if (friendScore >= 75) profileUnlocked = true;
-            
-            if (profileUnlocked) {
+            // HUD Profile Button visibility
+            if (unlockedProfiles.includes(currentRoute)) {
                 document.getElementById('profile-btn-container').classList.remove('hidden');
             } else {
                 document.getElementById('profile-btn-container').classList.add('hidden');
@@ -696,7 +754,7 @@
             
             // Dynamic Backgrounds and Diary Unlocks
             if (currentNode.startsWith('mina')) {
-                bgElement.src = "./bg_min.jpg";
+                bgElement.src = "./bg_mina.jpg";
                 if (currentNode === 'mina_end') {
                     unlockDiary(7, "Diary #7: Mina & The Pond", "I helped Mina fish her multi-tool out of the pond. The algae was glowing. Also, she's Amy's roommate, which explains a lot. She seems incredibly annoyed by her.");
                 }
@@ -711,18 +769,18 @@
                 bgElement.src = "./bg_cabin.jpg";
                 unlockDiary(2, "Diary #2: The Stakeout", "Day 2. We staked out the Director's cabin and saw them unloading glowing green ooze!");
                 unlockDiary(3, "Diary #3: Cabin 5", "Day 3. I went to Amy's cabin. We're planning to fly a kite to test the atmospheric anomaly.");
-            } else if (currentNode.startsWith('ep3')) {
-                bgElement.src = "./bg_cabin.jpg";
-            } else if (currentNode === 'ep4_start') {
-                bgElement.src = "./bg_camp.jpg";
                 
-                // UNLOCK MINA HERE
+                // UNLOCK MINA HERE (Occurs immediately after completing Episode 2)
                 if (!minaUnlocked) {
                     minaUnlocked = true;
                     localStorage.setItem('campOhioMinaUnlocked', 'true');
                     showNotification("🔓 NEW CHARACTER UNLOCKED: Mina Monroe! Check the Home Screen.");
                 }
 
+            } else if (currentNode.startsWith('ep3')) {
+                bgElement.src = "./bg_cabin.jpg";
+            } else if (currentNode === 'ep4_start') {
+                bgElement.src = "./bg_camp.jpg";
             } else if (currentNode.startsWith('ep4')) {
                 bgElement.src = "./bg_camp.jpg";
                 if (currentNode === 'ep4_diary') {
@@ -742,11 +800,9 @@
         function renderNode() {
             const data = STORY[currentNode];
             
-            // Handle Forced Profile Unlock (Mina Route)
-            if (data.unlockProfile && !profileUnlocked) {
-                profileUnlocked = true;
-                const charName = currentRoute === 'amy' ? 'Amy' : 'Mina';
-                showNotification(`🎉 ${charName}'s Profile Unlocked! Check your menu.`);
+            // Handle Direct Node Profile Unlocks
+            if (data.unlockProfile) {
+                unlockGlobalProfile(currentRoute);
                 updateHUD();
             }
 
@@ -1169,10 +1225,55 @@
             document.getElementById('diary-modal').classList.remove('flex');
         }
 
-        function openProfile() {
+        // ================= PROFILE GALLERY & VIEWING ================= //
+
+        function openProfileGallery() {
+            document.getElementById('profile-gallery-modal').classList.remove('hidden');
+            document.getElementById('profile-gallery-modal').classList.add('flex');
+            
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+            
+            const allChars = [
+                { id: 'amy', name: 'Amy', img: './image_44fc01.jpg', border: 'border-pink-500/50', hover: 'hover:border-pink-400', text: 'text-pink-400', iconBorder: 'border-pink-400' },
+                { id: 'mina', name: 'Mina', img: './mina.jpg', border: 'border-purple-500/50', hover: 'hover:border-purple-400', text: 'text-purple-400', iconBorder: 'border-purple-400' }
+            ];
+            
+            allChars.forEach(char => {
+                const isUnlocked = unlockedProfiles.includes(char.id);
+                const div = document.createElement('div');
+                
+                if (isUnlocked) {
+                    div.className = `bg-slate-800 p-4 rounded-2xl border-2 ${char.border} ${char.hover} hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all cursor-pointer flex flex-col items-center group`;
+                    div.onclick = () => openSpecificProfile(char.id);
+                    div.innerHTML = `
+                        <div class="w-24 h-24 rounded-full overflow-hidden border-2 ${char.iconBorder} mb-3 group-hover:scale-110 transition-transform">
+                            <img src="${char.img}" class="w-full h-full object-cover" />
+                        </div>
+                        <h3 class="text-xl font-bold ${char.text}">${char.name}</h3>
+                    `;
+                } else {
+                    div.className = `bg-slate-900 p-4 rounded-2xl border-2 border-slate-700 flex flex-col items-center opacity-60 grayscale`;
+                    div.innerHTML = `
+                        <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-slate-600 mb-3 bg-slate-800 flex items-center justify-center">
+                            <span class="text-4xl text-slate-600">?</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-500">Locked</h3>
+                    `;
+                }
+                grid.appendChild(div);
+            });
+        }
+
+        function closeProfileGallery() {
+            document.getElementById('profile-gallery-modal').classList.add('hidden');
+            document.getElementById('profile-gallery-modal').classList.remove('flex');
+        }
+
+        function openSpecificProfile(charId) {
             const modalBox = document.getElementById('profile-modal-box');
             
-            if (currentRoute === 'amy') {
+            if (charId === 'amy') {
                 modalBox.className = "bg-slate-900 border-4 border-pink-500 text-slate-200 w-full max-w-2xl rounded-3xl p-8 shadow-[0_0_50px_rgba(236,72,153,0.5)] relative";
                 document.getElementById('prof-header-name').className = "text-4xl font-black mb-6 border-b-2 border-slate-700 pb-4 text-pink-400";
                 document.getElementById('prof-img').src = "./image_44fc01.jpg";
@@ -1183,7 +1284,7 @@
                 document.getElementById('prof-secret-title').innerText = "Amy's Secret Sidenote:";
                 document.getElementById('prof-secret-title').className = "text-sm font-bold text-pink-400 uppercase tracking-widest mb-2";
                 document.getElementById('prof-secret-text').innerText = "\"The anomaly seems to be centered around the lake. I've noticed the water doesn't reflect the sky correctly.\"";
-            } else {
+            } else if (charId === 'mina') {
                 modalBox.className = "bg-slate-900 border-4 border-purple-500 text-slate-200 w-full max-w-2xl rounded-3xl p-8 shadow-[0_0_50px_rgba(168,85,247,0.5)] relative";
                 document.getElementById('prof-header-name').className = "text-4xl font-black mb-6 border-b-2 border-slate-700 pb-4 text-purple-400";
                 document.getElementById('prof-img').src = "./mina.jpg";
@@ -1199,10 +1300,17 @@
             document.getElementById('profile-modal').classList.remove('hidden');
             document.getElementById('profile-modal').classList.add('flex');
         }
+
+        // Wrapper function to open profile directly from the HUD
+        function openProfile() {
+            openSpecificProfile(currentRoute);
+        }
+
         function closeProfile() {
             document.getElementById('profile-modal').classList.add('hidden');
             document.getElementById('profile-modal').classList.remove('flex');
         }
+
 
         // Global Key Listener for Spacebar
         window.addEventListener('keydown', (e) => {
