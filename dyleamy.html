@@ -95,7 +95,7 @@
                 <h1 class="text-5xl md:text-6xl font-black mb-4 text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]">ACQUAINTANCES</h1>
                 <div class="text-2xl text-slate-400 font-bold mb-6">Final Friendship: <span id="final-score-low"></span>%</div>
                 <div class="bg-slate-900/80 p-8 rounded-2xl border-2 border-red-900 mb-12 max-w-lg shadow-2xl">
-                    <p class="text-xl text-slate-300">You survived the stakeout and the kite experiment, but she isn't entirely convinced you aren't an alien clone. You'll just have to survive the rest of the summer on your own.</p>
+                    <p class="text-xl text-slate-300">You survived the stakeout and the drone incident, but she isn't entirely convinced you aren't an alien clone. You'll just have to survive the rest of the summer on your own.</p>
                 </div>
             </div>
 
@@ -118,7 +118,7 @@
 
             <!-- Score Popup -->
             <div id="score-popup" class="hidden absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-[60] animate-[bounce_0.5s_infinite]">
-                <div id="score-popup-text" class="text-2xl md:text-4xl font-black px-6 py-4 rounded-2xl border-4 shadow-[0_0_40px_rgba(0,0,0,0.8)] backdrop-blur-sm"></div>
+                <div id="score-popup-text" class="text-2xl md:text-4xl font-black px-6 py-4 rounded-2xl border-4 shadow-[0_0_40px_rgba(0,0,0,0.8)] backdrop-blur-sm text-center"></div>
             </div>
 
             <!-- HUD: Stats -->
@@ -159,8 +159,8 @@
                 <img src="./image_44fc01.jpg" alt="Amy 3D" onerror="this.src='https://placehold.co/400x600/pink/white?text=Amy+Model'" class="h-full w-auto object-contain block rounded-xl" />
             </div>
 
-            <!-- Dialogue Box (Reduced Size by ~30%) -->
-            <div class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[70%] bg-slate-950/95 border-2 border-slate-600 rounded-2xl p-4 sm:p-5 shadow-2xl min-h-[140px] flex flex-col justify-between backdrop-blur-md z-20">
+            <!-- Dialogue Box (60% width) -->
+            <div class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 w-[95%] sm:w-[60%] bg-slate-950/95 border-2 border-slate-600 rounded-2xl p-4 shadow-2xl min-h-[120px] flex flex-col justify-between backdrop-blur-md z-20">
                 
                 <!-- Special Action Button -->
                 <div id="special-action-container" class="absolute -top-16 right-0 z-30 hidden">
@@ -175,15 +175,15 @@
                 </div>
 
                 <!-- Dialogue Text -->
-                <div id="dialogue-text" class="text-slate-200 text-base md:text-lg font-medium leading-relaxed mt-1 italic"></div>
+                <div id="dialogue-text" class="text-slate-200 text-base md:text-lg font-medium leading-relaxed mt-2 italic"></div>
 
                 <!-- Choices Container -->
-                <div class="mt-4 flex flex-col items-end w-full">
+                <div class="mt-3 flex flex-col items-end w-full">
                     <div id="choices-container" class="w-full space-y-2 mt-2 grid grid-cols-1 gap-1">
                         <!-- Choices injected here -->
                     </div>
                     <div id="next-btn-container" class="hidden w-full flex justify-end mt-2">
-                        <button id="next-btn" onclick="handleNext()" class="bg-pink-600 hover:bg-pink-500 text-white px-8 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(219,39,119,0.5)] flex items-center gap-2 group text-base sm:text-lg">
+                        <button id="next-btn" onclick="handleNext()" class="bg-pink-600 hover:bg-pink-500 text-white px-8 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(219,39,119,0.5)] flex items-center gap-2 group text-base">
                             <span id="next-btn-text">Next</span> <span class="group-hover:translate-x-1 transition-transform">&#9654;</span>
                         </button>
                     </div>
@@ -192,6 +192,24 @@
         </div>
 
         <!-- ================= MODALS ================= -->
+
+        <!-- Skill Check Mini-game Modal -->
+        <div id="skill-check-modal" class="hidden absolute inset-0 z-[110] bg-slate-950/90 backdrop-blur-sm flex-col items-center justify-center fade-in">
+            <h2 class="text-3xl md:text-4xl font-black text-white mb-2 tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">SECURITY LATCH BYPASS</h2>
+            <div class="text-xl md:text-2xl text-blue-400 font-bold mb-8">Latches Cleared: <span id="skill-progress" class="text-white font-black">0</span> / 10</div>
+            
+            <div class="relative w-[90%] sm:w-[500px] h-12 bg-slate-800 rounded-full border-4 border-slate-600 overflow-hidden mb-8 shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+                <!-- Target Area -->
+                <div id="skill-target" class="absolute top-0 bottom-0 bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)] border-x-2 border-green-300"></div>
+                <!-- Moving Cursor -->
+                <div id="skill-cursor" class="absolute top-0 bottom-0 w-2 bg-white shadow-[0_0_15px_rgba(255,255,255,1)] rounded-full -translate-x-1/2"></div>
+            </div>
+            
+            <button onclick="hitSkillCheck()" class="bg-blue-600 hover:bg-blue-500 text-white px-12 py-4 rounded-2xl font-black text-2xl shadow-[0_0_20px_rgba(37,99,235,0.8)] transition-transform hover:scale-105 active:scale-95 border-2 border-blue-400">
+                HIT (Spacebar)
+            </button>
+            <p class="text-slate-400 mt-6 font-bold uppercase tracking-widest animate-pulse text-sm text-center px-4">Press when the line is inside the green zone!<br>Missing resets the entire lock.</p>
+        </div>
 
         <!-- Shop Modal -->
         <div id="shop-modal" class="hidden absolute inset-0 z-[80] bg-black/60 backdrop-blur-sm items-center justify-center p-4 fade-in">
@@ -400,16 +418,53 @@
             },
             ep3_kite: { speaker: "Amy", text: "Perfect! These strings are strong enough to break through the atmospheric layer. Let's assemble it and head to the clearing.", next: "ep3_flight" },
             ep3_flight: { speaker: "", text: "You both run out to the clearing. The kite catches an unnatural, perfectly steady breeze. It flies higher and higher...", next: "ep3_end" },
-            ep3_end: { speaker: "Amy", text: "Look! The kite didn't just fly... it hit something. The sky! It literally hit the sky and short-circuited a rendering panel!", end: true },
+            ep3_end: { speaker: "Amy", text: "Look! The kite didn't just fly... it hit something. The sky! It literally hit the sky and short-circuited a rendering panel!", next: "ep4_start" },
+
+            // === EPISODE 4 ===
+            ep4_start: { speaker: "", text: "EPISODE 4: THE MECHANISM. \n\nThe kite crashes back down to the ground, dragging something heavy with it. Amy runs over to the wreckage and pulls out a metallic object.", next: "ep4_cam" },
+            ep4_cam: { speaker: "Amy", text: "It's a drone camera! They were watching us from the 'sky'. But the casing is fused shut with a complex mechanical lock. We need to open it to see the internal data.", next: "ep4_reveal" },
+            ep4_reveal: { speaker: "You", text: "Let me look at it. I can definitely open that. I was heavily involved in a competitive robotics team back home.", next: "ep4_amy_react" },
+            ep4_amy_react: { speaker: "Amy", text: "Wait, really? You build robots? That's... incredibly useful. Okay, genius, we'll need a Screwdriver to bypass the latches. The camp store should have one.", next: "ep4_hub" },
+            ep4_hub: {
+                speaker: "", text: "You are back at the clearing. You need a Screwdriver to begin the disassembly.",
+                choices: [
+                    { text: "Begin Disassembly (Skill Check)", next: "ep4_minigame_prep", requireItem: "Screwdriver" },
+                    { text: "Search the crater for coins", next: "ep4_grind1" }
+                ]
+            },
+            ep4_grind1: {
+                speaker: "", text: "You rummage through the dirt and burned grass near the crash site. You find a few scattered coins.",
+                choices: [
+                    { text: "Keep searching", next: "ep4_grind2", coinChange: 3 },
+                    { text: "Return", next: "ep4_hub", coinChange: 2 }
+                ]
+            },
+            ep4_grind2: {
+                speaker: "", text: "You look under a nearby log. You find more shiny coins hidden in the moss.",
+                choices: [
+                    { text: "Search the crater again", next: "ep4_grind1", coinChange: 3 },
+                    { text: "Return", next: "ep4_hub", coinChange: 2 }
+                ]
+            },
+            ep4_minigame_prep: { speaker: "Amy", text: "Okay, you have the screwdriver. The internal mechanisms are extremely delicate. You have to bypass 10 security latches in a row.", next: "ep4_minigame_prep2" },
+            ep4_minigame_prep2: { speaker: "Amy", text: "If you mess up even once, the lock's tamper-prevention will trigger, the latches will reset, and we'll have to start all over!", next: "ep4_trigger" },
+            ep4_trigger: {
+                speaker: "", text: "Get ready for the Skill Check. Press SPACEBAR when the moving line is inside the green zone! You must hit 10 in a row.",
+                specialAction: "startSkillCheck"
+            },
+            ep4_success: { speaker: "Amy", text: "You did it! The final latch popped open! I can't believe you actually pulled that off. You're completely brilliant.", next: "ep4_diary" },
+            ep4_diary: { speaker: "", text: "(Amy gives you a genuinely impressed smile. She pulls a glowing data drive from the camera.)", next: "ep4_end" },
+            ep4_end: { speaker: "Amy", text: "This data drive has exactly what we need. We're going to blow the lid off this entire camp. Let's get to work.", end: true },
 
             drink_thanks: { speaker: "Amy", text: "*Gulp, gulp*... Ahh! Thank you so much! I was getting incredibly parched from all this intense investigating. I definitely owe you one.", next: "RETURN" }
         };
 
         const SHOP_ITEMS = [
             { id: 'Water Bottle', price: 5, desc: 'A refreshing drink. Good for making friends.' },
-            { id: 'Binoculars', price: 25, desc: 'Essential for long-distance stakeouts.' },
+            { id: 'Screwdriver', price: 10, desc: 'Essential for taking apart electronics.' },
             { id: 'Strings', price: 15, desc: 'High-tension string. Needed to build a kite.' },
-            { id: 'Secret Diary', price: 30, desc: 'Unlocks Diary #4 in your menu.' }
+            { id: 'Binoculars', price: 25, desc: 'Essential for long-distance stakeouts.' },
+            { id: 'Secret Diary', price: 30, desc: 'Unlocks Diary #5 in your menu.' }
         ];
 
         // State Variables
@@ -420,6 +475,15 @@
         let inventory = [];
         let diaries = [];
         let profileUnlocked = false;
+
+        // Skill Check Variables
+        let skillAnimFrame;
+        let cursorPosition = 0;
+        let cursorDirection = 1;
+        let skillSpeed = 1.3; // CONSTANT moderate speed
+        let currentSkillTargetLeft = 40;
+        let currentSkillTargetWidth = 20;
+        let skillHits = 0;
 
         // UI Management Functions
         function showScreen(screenId) {
@@ -485,6 +549,14 @@
                 unlockDiary(3, "Diary #3: Cabin 5", "Day 3. I went to Amy's cabin. It's filled with conspiracy boards and red strings. We're planning to fly a kite to test the atmospheric anomaly.");
             } else if (currentNode.startsWith('ep3')) {
                 bgElement.src = "./bg_cabin.jpg";
+            } else if (currentNode === 'ep4_start') {
+                bgElement.src = "./bg_camp.jpg";
+            } else if (currentNode.startsWith('ep4')) {
+                bgElement.src = "./bg_camp.jpg";
+                // Grant Diary 4 automatically when Episode 4 is almost done
+                if (currentNode === 'ep4_diary') {
+                    unlockDiary(4, "Diary #4: The Mechanism", "The kite knocked loose a strange drone camera from the 'sky'. I used my robotics competition experience to hack it open with a screwdriver. I completed 10 skill checks in a row! Amy was genuinely impressed, and we recovered a secret data drive.");
+                }
             }
         }
 
@@ -548,7 +620,7 @@
                 actionContainer.classList.add('hidden');
             }
 
-            // Set Choices / Next Button / End Button
+            // Set Choices / Next Button
             const choicesContainer = document.getElementById('choices-container');
             const nextContainer = document.getElementById('next-btn-container');
             const nextBtnText = document.getElementById('next-btn-text');
@@ -565,27 +637,33 @@
                     const btn = document.createElement('button');
                     
                     if (isLocked) {
-                        btn.className = "w-full text-left px-4 py-3 sm:px-5 sm:py-3 rounded-xl transition-all duration-200 border shadow-md font-medium text-base sm:text-lg bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed";
+                        btn.className = "w-full text-left px-4 py-2 sm:px-4 sm:py-3 rounded-xl transition-all duration-200 border shadow-md font-medium text-sm sm:text-base bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed";
                         btn.innerHTML = `${choice.text} <span class="text-yellow-500 ml-2">(🔒 Requires ${choice.requireItem})</span>`;
                         btn.disabled = true;
                     } else {
-                        btn.className = "w-full text-left px-4 py-3 sm:px-5 sm:py-3 rounded-xl transition-all duration-200 border shadow-md font-medium text-base sm:text-lg bg-slate-800/80 hover:bg-pink-600/90 text-slate-200 hover:text-white border-slate-600 hover:border-pink-300 hover:pl-6";
+                        btn.className = "w-full text-left px-4 py-2 sm:px-4 sm:py-3 rounded-xl transition-all duration-200 border shadow-md font-medium text-sm sm:text-base bg-slate-800/80 hover:bg-pink-600/90 text-slate-200 hover:text-white border-slate-600 hover:border-pink-300 hover:pl-6";
                         btn.innerText = choice.text;
                         btn.onclick = () => handleChoice(choice);
                     }
                     choicesContainer.appendChild(btn);
                 });
+            } else if (data.specialAction === 'startSkillCheck') {
+                choicesContainer.classList.add('hidden');
+                nextContainer.classList.remove('hidden');
+                nextBtnText.innerText = "Start Hacking!";
+                nextBtn.className = "bg-blue-600 hover:bg-blue-500 text-white px-8 py-2 rounded-xl font-black transition-all shadow-[0_0_20px_rgba(37,99,235,0.8)] animate-pulse text-base flex items-center gap-2";
+                nextBtn.onclick = () => { startSkillCheck(); };
             } else if (data.end) {
                 choicesContainer.classList.add('hidden');
                 nextContainer.classList.remove('hidden');
                 nextBtnText.innerText = "Complete Episode";
-                nextBtn.className = "bg-yellow-500 hover:bg-yellow-400 text-slate-900 px-8 py-2 rounded-xl font-black transition-all shadow-[0_0_15px_rgba(234,179,8,0.5)] animate-pulse text-base sm:text-lg";
+                nextBtn.className = "bg-yellow-500 hover:bg-yellow-400 text-slate-900 px-8 py-2 rounded-xl font-black transition-all shadow-[0_0_15px_rgba(234,179,8,0.5)] animate-pulse text-base";
                 nextBtn.onclick = () => endGame();
             } else {
                 choicesContainer.classList.add('hidden');
                 nextContainer.classList.remove('hidden');
                 nextBtnText.innerText = data.next === 'RETURN' ? 'Return to Conversation' : 'Next';
-                nextBtn.className = "bg-pink-600 hover:bg-pink-500 text-white px-8 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(219,39,119,0.5)] flex items-center gap-2 group text-base sm:text-lg";
+                nextBtn.className = "bg-pink-600 hover:bg-pink-500 text-white px-8 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(219,39,119,0.5)] flex items-center gap-2 group text-base";
                 nextBtn.onclick = () => {
                     if (data.next === 'RETURN') {
                         currentNode = previousNode;
@@ -625,6 +703,97 @@
                 currentNode = choice.next;
                 renderNode();
             }
+        }
+
+        // ================= SKILL CHECK MINI-GAME ================= //
+        function startSkillCheck() {
+            document.getElementById('skill-check-modal').classList.remove('hidden');
+            document.getElementById('skill-check-modal').classList.add('flex');
+            skillHits = 0;
+            skillSpeed = 1.3; // Ensure constant moderate speed
+            updateSkillUI();
+            resetSkillRound();
+            animateSkillCheck();
+        }
+
+        function resetSkillRound() {
+            // Target gets smaller with each success (min 8%)
+            currentSkillTargetWidth = Math.max(8, 25 - (skillHits * 1.5)); 
+            // Randomize position to fit within 0-100%
+            currentSkillTargetLeft = 5 + Math.random() * (90 - currentSkillTargetWidth);
+            
+            document.getElementById('skill-target').style.left = currentSkillTargetLeft + '%';
+            document.getElementById('skill-target').style.width = currentSkillTargetWidth + '%';
+            
+            cursorPosition = 0;
+            cursorDirection = 1;
+            // The speed variable is kept constant now, not increasing per hit.
+        }
+
+        function animateSkillCheck() {
+            cursorPosition += cursorDirection * skillSpeed;
+            if (cursorPosition >= 100) {
+                cursorPosition = 100;
+                cursorDirection = -1;
+            } else if (cursorPosition <= 0) {
+                cursorPosition = 0;
+                cursorDirection = 1;
+            }
+            
+            document.getElementById('skill-cursor').style.left = cursorPosition + '%';
+            skillAnimFrame = requestAnimationFrame(animateSkillCheck);
+        }
+
+        function hitSkillCheck() {
+            // Check if center of cursor is inside the target area
+            if (cursorPosition >= currentSkillTargetLeft && cursorPosition <= (currentSkillTargetLeft + currentSkillTargetWidth)) {
+                // Success
+                skillHits++;
+                coins += 5; // Reward 5 coins for each successful hit
+                
+                updateSkillUI();
+                updateHUD(); // Show coins updating immediately
+                
+                if (skillHits >= 10) {
+                    winSkillCheck();
+                } else {
+                    showScorePopup("GOOD HIT! +5 Coins", true);
+                    resetSkillRound();
+                }
+            } else {
+                // Fail
+                failSkillCheck();
+            }
+        }
+
+        function updateSkillUI() {
+            document.getElementById('skill-progress').innerText = skillHits;
+        }
+
+        function winSkillCheck() {
+            cancelAnimationFrame(skillAnimFrame);
+            document.getElementById('skill-check-modal').classList.add('hidden');
+            document.getElementById('skill-check-modal').classList.remove('flex');
+            
+            // Big reward for finishing the hack (alongside the final 5 coins already added)
+            friendScore = Math.min(100, friendScore + 20);
+            showScorePopup("PERFECT! +5 Coins & +20% Friendship", true);
+            updateHUD();
+            
+            currentNode = 'ep4_success';
+            renderNode();
+        }
+
+        function failSkillCheck() {
+            cancelAnimationFrame(skillAnimFrame);
+            document.getElementById('skill-check-modal').classList.add('hidden');
+            document.getElementById('skill-check-modal').classList.remove('flex');
+            
+            showScorePopup("FAILED! Mechanism Reset...", false);
+            
+            // Restart episode 4 penalty
+            currentNode = 'ep4_start';
+            renderNode();
         }
 
         function offerDrink() {
@@ -715,8 +884,8 @@
             let all = [...diaries];
             if (inventory.includes('Secret Diary')) {
                 all.push({
-                    id: 4,
-                    title: "Diary #4: Amy's Secret Notes",
+                    id: 5,
+                    title: "Diary #5: Amy's Secret Notes",
                     content: "If you're reading this, I trust you enough to share my personal stash of notes.\n\n- Counselor Steve's weakness: He needs to recharge his solar cells exactly at 3 AM.\n- Nutrient Paste: It's definitely an alien biomass designed to alter DNA.\n\nWe might be the only real humans left here. Trust no one else."
                 });
             }
@@ -761,10 +930,19 @@
             document.getElementById('profile-modal').classList.remove('flex');
         }
 
-        // Global Key Listener for Spacebar (Diary toggle)
+        // Global Key Listener for Spacebar (Diary & Skill Check)
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 e.preventDefault();
+                
+                // 1. Check if Skill Check modal is active
+                const skillModal = document.getElementById('skill-check-modal');
+                if (!skillModal.classList.contains('hidden')) {
+                    hitSkillCheck();
+                    return; // Stop here so it doesn't open the diary
+                }
+
+                // 2. Otherwise handle Diary toggle
                 const diaryModal = document.getElementById('diary-modal');
                 if (diaryModal.classList.contains('hidden')) {
                     // Only open if in game or end screen
