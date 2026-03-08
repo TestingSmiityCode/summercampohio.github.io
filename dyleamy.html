@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camp Ohio: The Anomaly</title>
-    <!-- We use Tailwind via CDN so it works locally without any setup -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Force Arial font across the entire game */
         body {
             font-family: Arial, Helvetica, sans-serif !important;
             user-select: none;
         }
         
-        /* Custom Animations */
         @keyframes shimmer {
             100% { transform: translateX(100%); }
         }
@@ -21,7 +19,6 @@
             animation: shimmer 2s infinite;
         }
         
-        /* Smooth fade transitions for screens */
         .fade-in {
             animation: fadeIn 0.5s ease-in forwards;
         }
@@ -30,7 +27,6 @@
             to { opacity: 1; }
         }
 
-        /* Hide broken image icons */
         img.fallback-hide {
             text-indent: 100%;
             white-space: nowrap;
@@ -38,45 +34,64 @@
         }
     </style>
 </head>
-<body class="min-h-screen bg-slate-950 flex items-center justify-center p-4 text-slate-100 selection:bg-pink-500/30">
+<body class="min-h-screen bg-slate-950 flex items-center justify-center p-4 text-slate-100 selection:bg-pink-500/30" onload="initMenu()">
 
     <div class="w-full max-w-5xl h-[700px] relative bg-slate-900 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] rounded-2xl border-4 border-slate-800">
 
         <!-- ================= START MENU SCREEN ================= -->
-        <div id="start-screen" class="absolute inset-0 z-50 overflow-hidden fade-in">
+        <div id="start-screen" class="absolute inset-0 z-50 overflow-hidden fade-in flex flex-col items-center justify-center p-8 text-center bg-slate-950/90">
             <!-- Background Image -->
-            <img src="./bg_menu.jpg" alt="Menu Background" onerror="this.style.display='none'" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-screen fallback-hide" />
+            <img src="./bg_menu.jpg" alt="Menu Background" onerror="this.style.display='none'" class="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-screen fallback-hide" />
             
-            <!-- Animated decorative elements -->
-            <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-            <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-pink-600/20 rounded-full blur-[100px] animate-pulse"></div>
-            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] animate-pulse" style="animation-delay: 1s;"></div>
+            <div class="relative z-10 w-full mb-8">
+                <h1 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-pink-300 via-pink-500 to-indigo-500 mb-2 drop-shadow-[0_0_25px_rgba(244,114,182,0.4)] tracking-tighter">
+                    CAMP OHIO
+                </h1>
+                <h2 class="text-xl md:text-xl text-indigo-300 font-bold tracking-[0.4em] uppercase opacity-80">
+                    The Anomaly
+                </h2>
+            </div>
             
-            <div class="relative z-10 w-full h-full flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-indigo-950/80 via-transparent to-slate-950/90">
+            <h3 class="relative z-10 text-2xl text-white font-bold mb-6 tracking-widest border-b-2 border-slate-700 pb-2">SELECT CAMPER</h3>
+
+            <!-- Character Selection Container -->
+            <div class="relative z-10 flex flex-col md:flex-row gap-8 w-full max-w-3xl justify-center items-center">
                 
-                <div class="mb-10 p-8 rounded-3xl border border-pink-500/20 bg-black/40 backdrop-blur-md shadow-[0_0_40px_rgba(236,72,153,0.15)] relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-pink-500/10 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
-                    <h1 class="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-pink-300 via-pink-500 to-indigo-500 mb-2 drop-shadow-[0_0_25px_rgba(244,114,182,0.4)] tracking-tighter">
-                        CAMP OHIO
-                    </h1>
-                    <h2 class="text-xl md:text-2xl text-indigo-300 font-bold tracking-[0.4em] uppercase opacity-80">
-                        The Anomaly
-                    </h2>
-                </div>
-                
-                <div class="relative mb-12 group">
-                    <!-- Decorative rings around character -->
-                    <div class="absolute inset-[-15px] rounded-full border border-pink-500/30 animate-[spin_10s_linear_infinite]"></div>
-                    <div class="absolute inset-[-25px] rounded-full border border-indigo-500/20 animate-[spin_15s_linear_infinite_reverse]"></div>
-                    
-                    <div class="w-40 h-40 rounded-full overflow-hidden border-4 border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.5)] bg-slate-800 flex items-center justify-center relative z-10">
-                        <img src="./image_44fc01.jpg" alt="Amy 3D Model" onerror="this.src='https://placehold.co/400x600/pink/white?text=Amy+Model'" class="w-full h-full object-cover" />
+                <!-- Character: Amy -->
+                <div class="bg-slate-900/90 p-6 rounded-3xl border-2 border-pink-500/40 flex flex-col items-center shadow-[0_0_30px_rgba(236,72,153,0.15)] w-64">
+                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-pink-500 mb-4 bg-slate-800">
+                        <img src="./image_44fc01.jpg" alt="Amy" onerror="this.src='https://placehold.co/400x600/pink/white?text=Amy'" class="w-full h-full object-cover" />
                     </div>
+                    <h3 class="text-2xl font-black text-pink-400 mb-1">Amy</h3>
+                    <p class="text-slate-400 text-xs mb-6 text-center h-12">Paranoid Genius<br>Route: The Mechanism</p>
+                    <button onclick="startRoute('amy')" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-black py-3 px-6 rounded-xl transition-all shadow-lg hover:scale-105 border border-pink-400 uppercase tracking-widest text-sm">
+                        Start Route
+                    </button>
                 </div>
-                
-                <button onclick="startGame()" class="relative overflow-hidden bg-pink-600 text-white text-2xl font-black py-4 px-16 rounded-full shadow-[0_0_30px_rgba(219,39,119,0.4)] transition-all hover:scale-110 hover:shadow-[0_0_50px_rgba(219,39,119,0.8)] border-2 border-pink-400 group">
-                    <span class="relative z-10 uppercase tracking-widest">Start Game</span>
-                    <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+
+                <!-- Character: Mina -->
+                <div id="mina-card" class="bg-slate-900/90 p-6 rounded-3xl border-2 border-purple-500/40 flex flex-col items-center shadow-[0_0_30px_rgba(168,85,247,0.15)] w-64 relative overflow-hidden">
+                    
+                    <!-- Locked Overlay -->
+                    <div id="mina-locked" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center text-center p-4">
+                        <span class="text-5xl mb-3">🔒</span>
+                        <span class="text-purple-400 font-bold text-sm uppercase tracking-widest">Complete Amy's<br>Episode 3<br>To Unlock</span>
+                    </div>
+
+                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-purple-500 mb-4 bg-slate-800">
+                        <img src="./mina.jpg" alt="Mina" onerror="this.src='https://placehold.co/400x600/purple/white?text=Mina'" class="w-full h-full object-cover" />
+                    </div>
+                    <h3 class="text-2xl font-black text-purple-400 mb-1">Mina</h3>
+                    <p class="text-slate-400 text-xs mb-6 text-center h-12">Goth Tomboy<br>Route: The Rebellion</p>
+                    <button onclick="startRoute('mina')" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-black py-3 px-6 rounded-xl transition-all shadow-lg hover:scale-105 border border-purple-400 uppercase tracking-widest text-sm">
+                        Start Route
+                    </button>
+                </div>
+            </div>
+
+            <div class="relative z-10 mt-10">
+                <button onclick="loadGame()" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 font-bold py-3 px-10 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:border-emerald-400">
+                    📂 Load Saved Game
                 </button>
             </div>
         </div>
@@ -87,7 +102,7 @@
                 <h1 class="text-5xl md:text-6xl font-black mb-4 text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.6)]">BEST FRIENDS!</h1>
                 <div class="text-2xl text-pink-400 font-bold mb-6">Final Friendship: <span id="final-score-high"></span>%</div>
                 <div class="bg-slate-900/80 p-8 rounded-2xl border-2 border-green-900 mb-12 max-w-lg shadow-2xl">
-                    <p class="text-xl text-slate-300">Success! You proved you aren't completely brainwashed. She trusts you, and now you're officially partners investigating the terrifying mysteries of Summer Camp Ohio together!</p>
+                    <p class="text-xl text-slate-300">Success! You proved you aren't completely brainwashed. You survived the anomaly together.</p>
                 </div>
             </div>
 
@@ -95,11 +110,11 @@
                 <h1 class="text-5xl md:text-6xl font-black mb-4 text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]">ACQUAINTANCES</h1>
                 <div class="text-2xl text-slate-400 font-bold mb-6">Final Friendship: <span id="final-score-low"></span>%</div>
                 <div class="bg-slate-900/80 p-8 rounded-2xl border-2 border-red-900 mb-12 max-w-lg shadow-2xl">
-                    <p class="text-xl text-slate-300">You survived the stakeout and the drone incident, but she isn't entirely convinced you aren't an alien clone. You'll just have to survive the rest of the summer on your own.</p>
+                    <p class="text-xl text-slate-300">You survived the events, but your bond wasn't strong enough. You'll just have to survive the rest of the summer on your own.</p>
                 </div>
             </div>
 
-            <button onclick="showScreen('start-screen')" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 text-lg font-bold py-3 px-10 rounded-xl transition-all hover:scale-105">Play Again</button>
+            <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 text-lg font-bold py-3 px-10 rounded-xl transition-all hover:scale-105">Return to Menu</button>
             <p class="mt-8 text-slate-500 uppercase tracking-widest font-bold text-sm">(Press Space to read Diaries)</p>
         </div>
 
@@ -113,7 +128,7 @@
 
             <!-- Notification Popup -->
             <div id="notification-box" class="hidden absolute top-6 left-1/2 -translate-x-1/2 z-[60] animate-[bounce_1s_infinite]">
-                <div id="notification-text" class="bg-amber-600/90 border-2 border-amber-300 text-white font-bold px-6 py-3 rounded-full shadow-[0_0_20px_rgba(217,119,6,0.8)] backdrop-blur-md flex items-center gap-2"></div>
+                <div id="notification-text" class="bg-amber-600/90 border-2 border-amber-300 text-white font-bold px-6 py-3 rounded-full shadow-[0_0_20px_rgba(217,119,6,0.8)] backdrop-blur-md flex items-center gap-2 text-center"></div>
             </div>
 
             <!-- Score Popup -->
@@ -124,7 +139,7 @@
             <!-- HUD: Stats -->
             <div class="absolute top-6 right-6 z-40 bg-slate-900/80 p-4 rounded-2xl border-2 border-slate-700 w-64 md:w-72 backdrop-blur-md shadow-lg">
                 <div class="flex justify-between items-end mb-2 font-bold tracking-wide">
-                    <span class="text-pink-400 uppercase text-sm">Friendship</span>
+                    <span id="ui-friend-label" class="text-pink-400 uppercase text-sm">Friendship</span>
                     <span id="ui-friend-score" class="text-white text-lg">0%</span>
                 </div>
                 <div class="w-full bg-slate-950 rounded-full h-4 border border-slate-800 overflow-hidden mb-3 relative">
@@ -137,29 +152,33 @@
                 </div>
             </div>
 
-            <!-- HUD: Buttons -->
-            <div class="absolute top-6 left-6 z-40">
-                <button onclick="openShop()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-bold border-2 border-indigo-400 shadow-lg flex items-center gap-2 transition-transform hover:scale-105">
+            <!-- HUD: Buttons Left Column -->
+            <div class="absolute top-6 left-6 z-40 flex flex-col gap-3">
+                <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-5 py-2 rounded-xl font-bold border border-slate-500 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 w-32">
+                    🏠 Home
+                </button>
+                <button onclick="saveGame()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2 rounded-xl font-bold border border-emerald-500 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 w-32">
+                    💾 Save
+                </button>
+                <button onclick="openShop()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-xl font-bold border border-indigo-400 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 w-32">
                     🏪 Shop
                 </button>
-            </div>
-            <div class="absolute top-24 left-6 z-40">
-                <button onclick="openDiary()" class="bg-amber-700 hover:bg-amber-600 text-white px-6 py-3 rounded-xl font-bold border-2 border-amber-400 shadow-lg flex items-center gap-2 transition-transform hover:scale-105">
+                <button onclick="openDiary()" class="bg-amber-700 hover:bg-amber-600 text-white px-5 py-2 rounded-xl font-bold border border-amber-400 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 w-32">
                     📖 Diary
                 </button>
-            </div>
-            <div id="profile-btn-container" class="hidden absolute top-40 left-6 z-40 animate-[bounce_1s_infinite]">
-                <button onclick="openProfile()" class="bg-pink-700 hover:bg-pink-600 text-white px-6 py-3 rounded-xl font-bold border-2 border-pink-400 shadow-lg flex items-center gap-2 transition-transform hover:scale-105">
-                    👤 Profile
-                </button>
+                <div id="profile-btn-container" class="hidden w-32">
+                    <button id="profile-btn-color" onclick="openProfile()" class="bg-pink-700 hover:bg-pink-600 text-white px-5 py-2 w-full rounded-xl font-bold border border-pink-400 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105">
+                        👤 Profile
+                    </button>
+                </div>
             </div>
 
             <!-- Character Sprite -->
             <div id="character-sprite-container" class="absolute bottom-[25%] left-[25%] -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10">
-                <img src="./image_44fc01.jpg" alt="Amy 3D" onerror="this.src='https://placehold.co/400x600/pink/white?text=Amy+Model'" class="h-full w-auto object-contain block rounded-xl" />
+                <img id="character-sprite-img" src="./image_44fc01.jpg" alt="Character" onerror="this.src='https://placehold.co/400x600/pink/white?text=Model'" class="h-full w-auto object-contain block rounded-xl" />
             </div>
 
-            <!-- Dialogue Box (60% width) -->
+            <!-- Dialogue Box -->
             <div class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 w-[95%] sm:w-[60%] bg-slate-950/95 border-2 border-slate-600 rounded-2xl p-4 shadow-2xl min-h-[120px] flex flex-col justify-between backdrop-blur-md z-20">
                 
                 <!-- Special Action Button -->
@@ -245,21 +264,21 @@
 
         <!-- Profile Modal -->
         <div id="profile-modal" class="hidden absolute inset-0 z-[90] bg-black/80 flex items-center justify-center p-6 backdrop-blur-md fade-in">
-            <div class="bg-slate-900 border-4 border-pink-500 text-slate-200 w-full max-w-2xl rounded-3xl p-8 shadow-[0_0_50px_rgba(236,72,153,0.5)] relative">
+            <div id="profile-modal-box" class="bg-slate-900 border-4 border-pink-500 text-slate-200 w-full max-w-2xl rounded-3xl p-8 shadow-[0_0_50px_rgba(236,72,153,0.5)] relative">
                <button onclick="closeProfile()" class="absolute top-6 right-6 text-slate-400 hover:text-white text-4xl font-bold">&times;</button>
-               <h2 class="text-4xl font-black text-pink-400 mb-6 border-b-2 border-slate-700 pb-4">Character Profile: Amy</h2>
+               <h2 class="text-4xl font-black mb-6 border-b-2 border-slate-700 pb-4" id="prof-header-name">Character Profile</h2>
                
                <div class="flex flex-col md:flex-row gap-8 items-center md:items-start">
                  <div class="w-48 h-48 rounded-2xl overflow-hidden border-4 border-slate-700 bg-slate-800 shrink-0">
-                   <img src="./image_44fc01.jpg" alt="Amy Profile" onerror="this.src='https://placehold.co/400x600/pink/white?text=Amy+Model'" class="w-full h-full object-cover bg-white"/>
+                   <img id="prof-img" src="" alt="Profile" class="w-full h-full object-cover bg-white"/>
                  </div>
                  <div class="space-y-4 text-lg flex-1">
-                   <p><strong class="text-white">Name:</strong> Amy</p>
-                   <p><strong class="text-white">Location:</strong> Cabin 5</p>
-                   <p><strong class="text-white">Traits:</strong> Paranoid, brilliant, highly observant.</p>
-                   <div class="bg-slate-800 p-4 rounded-xl border-l-4 border-pink-500 mt-4 shadow-inner">
-                     <p class="text-sm font-bold text-pink-400 uppercase tracking-widest mb-2">Amy's Secret Sidenote:</p>
-                     <p class="italic text-slate-300">"The anomaly seems to be centered around the lake. I've noticed the water doesn't reflect the sky correctly. We need to be extremely careful if we go out there."</p>
+                   <p><strong class="text-white">Name:</strong> <span id="prof-name"></span></p>
+                   <p><strong class="text-white">Location:</strong> <span id="prof-loc"></span></p>
+                   <p><strong class="text-white">Traits:</strong> <span id="prof-traits"></span></p>
+                   <div id="prof-secret-box" class="bg-slate-800 p-4 rounded-xl border-l-4 mt-4 shadow-inner">
+                     <p id="prof-secret-title" class="text-sm font-bold uppercase tracking-widest mb-2"></p>
+                     <p id="prof-secret-text" class="italic text-slate-300"></p>
                    </div>
                  </div>
                </div>
@@ -270,204 +289,10 @@
 
     <!-- ================= GAME LOGIC (JAVASCRIPT) ================= -->
     <script>
-        // Game Data
-        const STORY = {
-            // === EPISODE 1 ===
-            start: { speaker: "", text: "The bus ride to 'Summer Camp Ohio' felt much longer than the brochure suggested. The pamphlet promised sunshine, archery, and lifelong friendships. But as you step off the bus, the sky is a sickly, unyielding grey.", next: "start2" },
-            start2: { speaker: "", text: "The woods surrounding the camp feel unnaturally quiet. No birds are singing. No wind rustles the leaves. In fact, the leaves look a bit too glossy, almost like they're made of cheap plastic.", next: "start3" },
-            start3: { speaker: "", text: "You carry your heavy duffel bag towards the cabins. The counselors standing by the entrance have wide, unblinking smiles that don't quite reach their eyes. They wave at the campers in perfect, terrifying synchronization.", next: "node2" },
-            node2: { speaker: "", text: "Trying to avoid the creepy counselors, you take a detour behind the mess hall. There, you spot a girl sitting on a tree stump. She's clutching a pencil and frantically writing in a leather-bound notebook.", next: "node3" },
-            node3: { speaker: "???", text: "(Muttering to herself) ...soil acidity levels completely abnormal for this region... the bark texture is repeating every three inches, it's a seamless texture wrap... Wait, who's there?!", next: "choice1_prompt" },
-            choice1_prompt: {
-                speaker: "You", text: "(She's frantic and deeply suspicious. How do I approach her without sounding like one of them?)",
-                choices: [
-                    { text: "You're right, the bark texture repeats every 3.14 inches.", next: "c1_a", scoreChange: 20, coinChange: 5 },
-                    { text: "Shh, keep your voice down. They are watching us.", next: "c1_b", scoreChange: 10, coinChange: 3 },
-                    { text: "Don't worry, I won't tell the counselors you're out here.", next: "c1_c", scoreChange: -15 }
-                ]
-            },
-            c1_a: { speaker: "Amy", text: "You noticed?! Most campers are too brain-dead from the orientation video to see it. I'm Amy. The flora here is entirely artificial.", next: "node4" },
-            c1_b: { speaker: "Amy", text: "Paranoia is a healthy survival trait here. Good. I'm Amy. The flora here is entirely artificial, by the way.", next: "node4" },
-            c1_c: { speaker: "Amy", text: "Tell them?! Are you insane? If you even mention my name to them, they'll scrub your memory! I don't need your 'protection', I need you to stay out of my way.", next: "node4" },
-            node4: { speaker: "Amy", text: "Look around you. The counselors haven't blinked once. I timed Counselor Steve; he stared at a pinecone for 47 minutes straight. And don't even get me started on the food in the mess hall.", next: "node4_b" },
-            node4_b: { speaker: "Amy", text: "They served 'Mystery Meatloaf' for lunch. I prodded it with my spork, and I swear it tried to bite me back. There is something horribly wrong with the nutritional supplies here.", next: "choice2_prompt" },
-            choice2_prompt: {
-                speaker: "You", text: "(What's the smartest way to handle the food situation?)",
-                choices: [
-                    { text: "I warned the other campers not to eat it. It's dangerous.", next: "c2_a", scoreChange: -20 },
-                    { text: "I slipped my meatloaf into my napkin. We can dissect it later.", next: "c2_b", scoreChange: 20, coinChange: 5 },
-                    { text: "I fed mine to a squirrel. The squirrel instantly dissolved.", next: "c2_c", scoreChange: 10, coinChange: 2 }
-                ]
-            },
-            c2_a: { speaker: "Amy", text: "You WARNED them?! Now the counselors know you're actively resisting assimilation! You've painted a massive target on your back!", next: "node5" },
-            c2_b: { speaker: "Amy", text: "Smart move. We need a physical sample if we're going to prove it's a sentient biomass designed to replace our internal organs.", next: "node5" },
-            c2_c: { speaker: "Amy", text: "A dissolving squirrel? Fascinating. And horrifying. I bet it's a highly corrosive sentient biomass designed to slowly replace our organs.", next: "node5" },
-            node5: { speaker: "Amy", text: "Tonight, I'm sneaking out after curfew. That's when the 'Special Deliveries' arrive at the Camp Director's cabin. A massive unmarked truck rolls in.", next: "node5_b" },
-            node5_b: { speaker: "Amy", text: "I need to get close enough to see what they are unloading. If I get caught, they'll probably send me to the 'Happy Room'—and nobody comes back from the Happy Room the same.", next: "choice3_prompt" },
-            choice3_prompt: {
-                speaker: "You", text: "(Sneaking out is risky. How should we plan this?)",
-                choices: [
-                    { text: "I'll distract them while you sneak into the cabin.", next: "c3_a", scoreChange: -15 },
-                    { text: "I'll go, but I'm bringing my camp-issued whistle just in case.", next: "c3_b", scoreChange: -20 },
-                    { text: "Midnight is too predictable. We should go during the 3 AM shift change.", next: "c3_c", scoreChange: 20, coinChange: 5 }
-                ]
-            },
-            c3_a: { speaker: "Amy", text: "Heroic, but stupid. A distraction means they capture you, torture you for my location, and we both lose. We move like ghosts, together.", next: "node6" },
-            c3_b: { speaker: "Amy", text: "A camp-issued whistle?! Are you trying to get us killed? That's a homing beacon for the counselors! Leave it behind.", next: "node6" },
-            c3_c: { speaker: "Amy", text: "Exactly. The 3 AM circadian dip affects their synthetic biology too. Meet me by the flagpole at 0300 hours. Wear dark clothing.", next: "node6" },
-            node6: { speaker: "", text: "Later that night, the camp is pitch black. You and Amy sneak past the mess hall, your footsteps muffled by the damp dirt. Suddenly, the heavy metal door of the kitchen creaks open.", next: "node6_b" },
-            node6_b: { speaker: "", text: "Counselor Steve emerges from the shadows. His usual plastered smile is gone. In the darkness, you can clearly see his eyes—they are glowing a faint, piercing yellow.", next: "choice4_prompt" },
-            choice4_prompt: {
-                speaker: "You", text: "(He's scanning the perimeter! We only have a split second!)",
-                choices: [
-                    { text: "Freeze. Their vision is based on movement, like a T-Rex.", next: "c4_a", scoreChange: -20 },
-                    { text: "Toss a rock towards the mess hall to divert his patrol path.", next: "c4_b", scoreChange: 20, coinChange: 5 },
-                    { text: "Dive into the anomaly-free zone behind the dumpster.", next: "c4_c", scoreChange: 10 }
-                ]
-            },
-            c4_a: { speaker: "Amy", text: "(She yanks you violently to the ground) Are you crazy?! He has thermal vision, not T-Rex vision! You almost got us assimilated!", next: "ep1_complete" },
-            c4_b: { speaker: "Amy", text: "(Whispering) Brilliant tactical misdirection. He's investigating the noise. Let's move while his sensors are recalibrating...", next: "ep1_complete" },
-            c4_c: { speaker: "Amy", text: "(Whispering) The smell of rotting biomass in this dumpster masks our thermal signature. Good instinct, but gross.", next: "ep1_complete" },
-            ep1_complete: { speaker: "Amy", text: "That was way too close. He's gone back inside. Listen, we survived night one, but we didn't get to the Director's cabin. Get some rest. Tomorrow, we do a proper stakeout.", next: "ep2_start" },
+        // Global Game State
+        let currentRoute = 'amy';
+        let minaUnlocked = false;
 
-            // === EPISODE 2 ===
-            ep2_start: { speaker: "", text: "EPISODE 2: THE STAKEOUT. \n\nThe next morning, the sun is shining, but it feels artificially warm. You meet Amy behind the archery range as planned.", next: "ep2_plan" },
-            ep2_plan: { speaker: "Amy", text: "Okay, new plan. The Director's cabin is heavily guarded by the counselors during the day. We need to observe from afar, but we don't have the right equipment.", next: "ep2_plan_b" },
-            ep2_plan_b: { speaker: "Amy", text: "The camp store sells Binoculars for 25 Coins. I know, it's extortion, but we need them to see into his office window from the ridge.", next: "ep2_q1" },
-            ep2_q1: {
-                speaker: "You", text: "(How should we get the binoculars?)",
-                choices: [
-                    { text: "I'll go buy them. I've been saving up my coins.", next: "ep2_q1_a", scoreChange: 10, coinChange: 5 },
-                    { text: "Let's just steal them from the store.", next: "ep2_q1_b", scoreChange: -15 },
-                    { text: "I can build a makeshift telescope out of a toilet paper roll.", next: "ep2_q1_c", scoreChange: -10 }
-                ]
-            },
-            ep2_q1_a: { speaker: "Amy", text: "Good. This camp tracks all 'stolen' goods with microscopic RFID tags anyway. Buying them legitimately is the only safe way.", next: "ep2_hub" },
-            ep2_q1_b: { speaker: "Amy", text: "Are you insane? They track everything with microscopic RFID tags! If we steal them, they'll know our exact location in seconds. We have to buy them.", next: "ep2_hub" },
-            ep2_q1_c: { speaker: "Amy", text: "We don't have time for your arts and crafts, MacGyver. We need high-grade optics to penetrate their tinted windows. Just buy them.", next: "ep2_hub" },
-            
-            ep2_hub: {
-                speaker: "", text: "You are standing near the Camp Quad. You need to gather enough coins and buy the Binoculars from the Shop to proceed.",
-                choices: [
-                    { text: "Start the Stakeout", next: "ep2_stakeout", requireItem: "Binoculars" },
-                    { text: "Search the dust for dropped coins", next: "ep2_grind1" }
-                ]
-            },
-            ep2_grind1: {
-                speaker: "", text: "You dig through the dirt near the camp vending machines. You manage to find some loose change dropped by careless campers.",
-                choices: [
-                    { text: "Keep searching the area", next: "ep2_grind2", coinChange: 3 },
-                    { text: "Return to the Quad", next: "ep2_hub", coinChange: 2 }
-                ]
-            },
-            ep2_grind2: {
-                speaker: "", text: "You look under the wooden benches. You scrape your knee, but you find a few more shiny coins hidden in the grass.",
-                choices: [
-                    { text: "Search the nearby trash cans", next: "ep2_grind3", coinChange: 3 },
-                    { text: "Return to the Quad", next: "ep2_hub", coinChange: 3 }
-                ]
-            },
-            ep2_grind3: {
-                speaker: "", text: "You brave the smell of the trash cans and find a handful of coins stuck to a discarded, glowing wrapper.",
-                choices: [
-                    { text: "Start over and search the vending machines again", next: "ep2_grind1", coinChange: 2 },
-                    { text: "Return to the Quad", next: "ep2_hub", coinChange: 2 }
-                ]
-            },
-
-            ep2_stakeout: { speaker: "Amy", text: "Perfect, you got the Binoculars! Let's get up to the ridge before Counselor Steve does his perimeter patrol.", next: "ep2_stakeout_b" },
-            ep2_stakeout_b: { speaker: "", text: "You both scramble up the rocky hill overlooking the camp. The Director's cabin sits isolated at the edge of the lake. You raise the binoculars to your eyes.", next: "ep2_stakeout_c" },
-            ep2_stakeout_c: { speaker: "Amy", text: "Okay, focus the lenses on the back window. The curtains are slightly parted. Tell me exactly what you see happening inside.", next: "ep2_q2" },
-            ep2_q2: {
-                speaker: "You", text: "(Looking carefully through the binoculars...)",
-                choices: [
-                    { text: "They're unloading crates of glowing green ooze into a vat!", next: "ep2_end_a", scoreChange: 30, coinChange: 5 },
-                    { text: "They're doing paperwork... wait, the paperwork is glowing.", next: "ep2_end_b", scoreChange: 10 },
-                    { text: "I can't see anything, everything is completely dark.", next: "ep2_end_c", scoreChange: -15 }
-                ]
-            },
-            ep2_end_a: { speaker: "Amy", text: "I knew it! The glowing green ooze! The biomass nutrient paste! This changes everything. We have to document this and get a sample.", next: "ep2_complete" },
-            ep2_end_b: { speaker: "Amy", text: "Glowing paperwork? They must be using bioluminescent ink to avoid digital interception. They are evolving...", next: "ep2_complete" },
-            ep2_end_c: { speaker: "Amy", text: "You left the lens caps on, genius. Give me those. Ugh, I have to do everything myself... wait. Good grief, look at that vat!", next: "ep2_complete" },
-            ep2_complete: { speaker: "Amy", text: "We've seen too much. We need to formulate a plan to expose this entire camp. But for now, we need to get back before they notice we're gone.", next: "ep3_start" },
-
-            // === EPISODE 3 ===
-            ep3_start: { speaker: "", text: "EPISODE 3: THE ANOMALY SKY. \n\nYou meet Amy inside her cabin. The door plaque reads 'Cabin 5'. The interior is a mess of red string, maps, and blurry photographs of the counselors.", next: "ep3_plan" },
-            ep3_plan: { speaker: "Amy", text: "We know they are hoarding biomass. Now we need to know the extent of the anomaly. I've calculated that the sky might be a localized projection.", next: "ep3_plan2" },
-            ep3_plan2: { speaker: "Amy", text: "We need to send an aerial probe. Or, in layman's terms, a kite. I have the sticks and fabric, but we need high-tension Strings to fly it high enough.", next: "ep3_hub" },
-            ep3_hub: {
-                speaker: "", text: "You are in Cabin 5. You need to gather enough coins and buy Strings from the Shop to proceed.",
-                choices: [
-                    { text: "Build the Kite", next: "ep3_kite", requireItem: "Strings", scoreChange: 30 },
-                    { text: "Search Cabin 5 for spare change", next: "ep3_grind1" }
-                ]
-            },
-            ep3_grind1: {
-                speaker: "", text: "You search under Amy's bunk bed. It's dusty, but you find some coins hidden next to a Geiger counter.",
-                choices: [
-                    { text: "Keep searching", next: "ep3_grind2", coinChange: 3 },
-                    { text: "Stop searching", next: "ep3_hub", coinChange: 2 }
-                ]
-            },
-            ep3_grind2: {
-                speaker: "", text: "You check inside a hollowed-out book titled 'Advanced Soil Acidity'. More coins!",
-                choices: [
-                    { text: "Search the bunk bed again", next: "ep3_grind1", coinChange: 3 },
-                    { text: "Stop searching", next: "ep3_hub", coinChange: 2 }
-                ]
-            },
-            ep3_kite: { speaker: "Amy", text: "Perfect! These strings are strong enough to break through the atmospheric layer. Let's assemble it and head to the clearing.", next: "ep3_flight" },
-            ep3_flight: { speaker: "", text: "You both run out to the clearing. The kite catches an unnatural, perfectly steady breeze. It flies higher and higher...", next: "ep3_end" },
-            ep3_end: { speaker: "Amy", text: "Look! The kite didn't just fly... it hit something. The sky! It literally hit the sky and short-circuited a rendering panel!", next: "ep4_start" },
-
-            // === EPISODE 4 ===
-            ep4_start: { speaker: "", text: "EPISODE 4: THE MECHANISM. \n\nThe kite crashes back down to the ground, dragging something heavy with it. Amy runs over to the wreckage and pulls out a metallic object.", next: "ep4_cam" },
-            ep4_cam: { speaker: "Amy", text: "It's a drone camera! They were watching us from the 'sky'. But the casing is fused shut with a complex mechanical lock. We need to open it to see the internal data.", next: "ep4_reveal" },
-            ep4_reveal: { speaker: "You", text: "Let me look at it. I can definitely open that. I was heavily involved in a competitive robotics team back home.", next: "ep4_amy_react" },
-            ep4_amy_react: { speaker: "Amy", text: "Wait, really? You build robots? That's... incredibly useful. Okay, genius, we'll need a Screwdriver to bypass the latches. The camp store should have one.", next: "ep4_hub" },
-            ep4_hub: {
-                speaker: "", text: "You are back at the clearing. You need a Screwdriver to begin the disassembly.",
-                choices: [
-                    { text: "Begin Disassembly (Skill Check)", next: "ep4_minigame_prep", requireItem: "Screwdriver" },
-                    { text: "Search the crater for coins", next: "ep4_grind1" }
-                ]
-            },
-            ep4_grind1: {
-                speaker: "", text: "You rummage through the dirt and burned grass near the crash site. You find a few scattered coins.",
-                choices: [
-                    { text: "Keep searching", next: "ep4_grind2", coinChange: 3 },
-                    { text: "Return", next: "ep4_hub", coinChange: 2 }
-                ]
-            },
-            ep4_grind2: {
-                speaker: "", text: "You look under a nearby log. You find more shiny coins hidden in the moss.",
-                choices: [
-                    { text: "Search the crater again", next: "ep4_grind1", coinChange: 3 },
-                    { text: "Return", next: "ep4_hub", coinChange: 2 }
-                ]
-            },
-            ep4_minigame_prep: { speaker: "Amy", text: "Okay, you have the screwdriver. The internal mechanisms are extremely delicate. You have to bypass 10 security latches in a row.", next: "ep4_minigame_prep2" },
-            ep4_minigame_prep2: { speaker: "Amy", text: "If you mess up even once, the lock's tamper-prevention will trigger, the latches will reset, and we'll have to start all over!", next: "ep4_trigger" },
-            ep4_trigger: {
-                speaker: "", text: "Get ready for the Skill Check. Press SPACEBAR when the moving line is inside the green zone! You must hit 10 in a row.",
-                specialAction: "startSkillCheck"
-            },
-            ep4_success: { speaker: "Amy", text: "You did it! The final latch popped open! I can't believe you actually pulled that off. You're completely brilliant.", next: "ep4_diary" },
-            ep4_diary: { speaker: "", text: "(Amy gives you a genuinely impressed smile. She pulls a glowing data drive from the camera.)", next: "ep4_end" },
-            ep4_end: { speaker: "Amy", text: "This data drive has exactly what we need. We're going to blow the lid off this entire camp. Let's get to work.", end: true },
-
-            drink_thanks: { speaker: "Amy", text: "*Gulp, gulp*... Ahh! Thank you so much! I was getting incredibly parched from all this intense investigating. I definitely owe you one.", next: "RETURN" }
-        };
-
-        const SHOP_ITEMS = [
-            { id: 'Water Bottle', price: 5, desc: 'A refreshing drink. Good for making friends.' },
-            { id: 'Screwdriver', price: 10, desc: 'Essential for taking apart electronics.' },
-            { id: 'Strings', price: 15, desc: 'High-tension string. Needed to build a kite.' },
-            { id: 'Binoculars', price: 25, desc: 'Essential for long-distance stakeouts.' },
-            { id: 'Secret Diary', price: 30, desc: 'Unlocks Diary #5 in your menu.' }
-        ];
-
-        // State Variables
         let currentNode = 'start';
         let previousNode = null;
         let friendScore = 0;
@@ -480,10 +305,262 @@
         let skillAnimFrame;
         let cursorPosition = 0;
         let cursorDirection = 1;
-        let skillSpeed = 1.3; // CONSTANT moderate speed
+        let skillSpeed = 1.3;
         let currentSkillTargetLeft = 40;
         let currentSkillTargetWidth = 20;
         let skillHits = 0;
+
+        // Initialize Menu Data
+        function initMenu() {
+            // Check storage for mina unlock status
+            const savedUnlock = localStorage.getItem('campOhioMinaUnlocked');
+            if (savedUnlock === 'true') {
+                minaUnlocked = true;
+            }
+
+            // Update UI based on unlock
+            const minaLockedOverlay = document.getElementById('mina-locked');
+            if (minaUnlocked) {
+                minaLockedOverlay.classList.add('hidden');
+            } else {
+                minaLockedOverlay.classList.remove('hidden');
+            }
+        }
+
+        // Save & Load Functions
+        function saveGame() {
+            const saveState = {
+                currentRoute,
+                currentNode,
+                friendScore,
+                coins,
+                inventory,
+                diaries,
+                profileUnlocked
+            };
+            localStorage.setItem('campOhioSaveData', JSON.stringify(saveState));
+            showNotification("💾 Game Progress Saved Successfully!");
+        }
+
+        function loadGame() {
+            const savedData = localStorage.getItem('campOhioSaveData');
+            if (savedData) {
+                try {
+                    const state = JSON.parse(savedData);
+                    currentRoute = state.currentRoute || 'amy';
+                    currentNode = state.currentNode || 'start';
+                    friendScore = state.friendScore || 0;
+                    coins = state.coins || 0;
+                    inventory = state.inventory || [];
+                    diaries = state.diaries || [];
+                    profileUnlocked = state.profileUnlocked || false;
+
+                    showScreen('game-screen');
+                    updateHUD();
+                    renderNode();
+                    showNotification("📂 Game Loaded!");
+                } catch (e) {
+                    showNotification("❌ Error loading save data.");
+                }
+            } else {
+                showNotification("❌ No saved game found.");
+            }
+        }
+
+        function goHome() {
+            showScreen('start-screen');
+            initMenu();
+        }
+
+        // Start Specific Route
+        function startRoute(routeStr) {
+            currentRoute = routeStr;
+            currentNode = (routeStr === 'amy') ? 'start' : 'mina_start';
+            
+            previousNode = null;
+            friendScore = 0;
+            coins = 0;
+            inventory = [];
+            diaries = [];
+            profileUnlocked = false;
+            
+            updateHUD();
+            renderNode();
+            showScreen('game-screen');
+        }
+
+        // Data for Game
+        const SHOP_ITEMS = [
+            { id: 'Water Bottle', price: 5, desc: 'A refreshing drink. Good for making friends.' },
+            { id: 'Screwdriver', price: 10, desc: 'Essential for taking apart electronics.' },
+            { id: 'Strings', price: 15, desc: 'High-tension string. Needed to build a kite.' },
+            { id: 'Binoculars', price: 25, desc: 'Essential for long-distance stakeouts.' },
+            { id: 'Secret Diary', price: 30, desc: 'Unlocks a special note in your Diary menu.' }
+        ];
+
+        const STORY = {
+            // ================= AMY ROUTE =================
+            // === EPISODE 1 ===
+            start: { speaker: "", text: "The bus ride to 'Summer Camp Ohio' felt much longer than the brochure suggested. The pamphlet promised sunshine, archery, and lifelong friendships. But as you step off the bus, the sky is a sickly, unyielding grey.", next: "start2" },
+            start2: { speaker: "", text: "The woods surrounding the camp feel unnaturally quiet. No birds are singing. No wind rustles the leaves. In fact, the leaves look a bit too glossy, almost like they're made of cheap plastic.", next: "start3" },
+            start3: { speaker: "", text: "You carry your heavy duffel bag towards the cabins. The counselors standing by the entrance have wide, unblinking smiles that don't quite reach their eyes. They wave at the campers in perfect, terrifying synchronization.", next: "node2" },
+            node2: { speaker: "", text: "Trying to avoid the creepy counselors, you take a detour behind the mess hall. There, you spot a girl sitting on a tree stump. She's clutching a pencil and frantically writing in a leather-bound notebook.", next: "node3" },
+            node3: { speaker: "???", text: "(Muttering to herself) ...soil acidity levels completely abnormal for this region... the bark texture is repeating every three inches... Wait, who's there?!", next: "choice1_prompt" },
+            choice1_prompt: {
+                speaker: "You", text: "(She's frantic and deeply suspicious. How do I approach her without sounding like one of them?)",
+                choices: [
+                    { text: "You're right, the bark texture repeats every 3.14 inches.", next: "c1_a", scoreChange: 20, coinChange: 5 },
+                    { text: "Shh, keep your voice down. They are watching us.", next: "c1_b", scoreChange: 10, coinChange: 3 },
+                    { text: "Don't worry, I won't tell the counselors you're out here.", next: "c1_c", scoreChange: -15 }
+                ]
+            },
+            c1_a: { speaker: "Amy", text: "You noticed?! Most campers are too brain-dead from the orientation video to see it. I'm Amy. The flora here is entirely artificial.", next: "node4" },
+            c1_b: { speaker: "Amy", text: "Paranoia is a healthy survival trait here. Good. I'm Amy. The flora here is entirely artificial, by the way.", next: "node4" },
+            c1_c: { speaker: "Amy", text: "Tell them?! Are you insane? If you even mention my name to them, they'll scrub your memory! Stay out of my way.", next: "node4" },
+            node4: { speaker: "Amy", text: "Look around you. The counselors haven't blinked once. I timed Counselor Steve; he stared at a pinecone for 47 minutes straight. And don't even get me started on the food.", next: "node4_b" },
+            node4_b: { speaker: "Amy", text: "They served 'Mystery Meatloaf' for lunch. I prodded it with my spork, and I swear it tried to bite me back.", next: "choice2_prompt" },
+            choice2_prompt: {
+                speaker: "You", text: "(What's the smartest way to handle the food situation?)",
+                choices: [
+                    { text: "I warned the other campers not to eat it. It's dangerous.", next: "c2_a", scoreChange: -20 },
+                    { text: "I slipped my meatloaf into my napkin. We can dissect it later.", next: "c2_b", scoreChange: 20, coinChange: 5 },
+                    { text: "I fed mine to a squirrel. The squirrel instantly dissolved.", next: "c2_c", scoreChange: 10, coinChange: 2 }
+                ]
+            },
+            c2_a: { speaker: "Amy", text: "You WARNED them?! Now the counselors know you're actively resisting assimilation! You've painted a massive target on your back!", next: "node5" },
+            c2_b: { speaker: "Amy", text: "Smart move. We need a physical sample if we're going to prove it's a sentient biomass designed to replace our internal organs.", next: "node5" },
+            c2_c: { speaker: "Amy", text: "A dissolving squirrel? Fascinating. And horrifying. I bet it's a highly corrosive sentient biomass.", next: "node5" },
+            node5: { speaker: "Amy", text: "Tonight, I'm sneaking out after curfew. That's when the 'Special Deliveries' arrive at the Camp Director's cabin.", next: "node5_b" },
+            node5_b: { speaker: "Amy", text: "I need to get close enough to see what they are unloading. If I get caught, they'll probably send me to the 'Happy Room'.", next: "choice3_prompt" },
+            choice3_prompt: {
+                speaker: "You", text: "(Sneaking out is risky. How should we plan this?)",
+                choices: [
+                    { text: "I'll distract them while you sneak into the cabin.", next: "c3_a", scoreChange: -15 },
+                    { text: "I'll go, but I'm bringing my camp-issued whistle just in case.", next: "c3_b", scoreChange: -20 },
+                    { text: "Midnight is too predictable. We should go during the 3 AM shift change.", next: "c3_c", scoreChange: 20, coinChange: 5 }
+                ]
+            },
+            c3_a: { speaker: "Amy", text: "Heroic, but stupid. A distraction means they capture you, torture you for my location, and we both lose.", next: "node6" },
+            c3_b: { speaker: "Amy", text: "A camp-issued whistle?! Are you trying to get us killed? That's a homing beacon! Leave it.", next: "node6" },
+            c3_c: { speaker: "Amy", text: "Exactly. The 3 AM circadian dip affects their synthetic biology too. Meet me by the flagpole at 0300 hours.", next: "node6" },
+            node6: { speaker: "", text: "Later that night, the camp is pitch black. You and Amy sneak past the mess hall. Suddenly, the heavy metal door of the kitchen creaks open.", next: "node6_b" },
+            node6_b: { speaker: "", text: "Counselor Steve emerges from the shadows. His usual plastered smile is gone. In the darkness, you can clearly see his eyes—they are glowing yellow.", next: "choice4_prompt" },
+            choice4_prompt: {
+                speaker: "You", text: "(He's scanning the perimeter! We only have a split second!)",
+                choices: [
+                    { text: "Freeze. Their vision is based on movement.", next: "c4_a", scoreChange: -20 },
+                    { text: "Toss a rock towards the mess hall to divert him.", next: "c4_b", scoreChange: 20, coinChange: 5 },
+                    { text: "Dive into the anomaly-free zone behind the dumpster.", next: "c4_c", scoreChange: 10 }
+                ]
+            },
+            c4_a: { speaker: "Amy", text: "(She yanks you violently to the ground) Are you crazy?! He has thermal vision! You almost got us assimilated!", next: "ep1_complete" },
+            c4_b: { speaker: "Amy", text: "(Whispering) Brilliant tactical misdirection. Let's move while his sensors are recalibrating...", next: "ep1_complete" },
+            c4_c: { speaker: "Amy", text: "(Whispering) Good instinct, but gross. The smell masks our thermal signature.", next: "ep1_complete" },
+            ep1_complete: { speaker: "Amy", text: "That was close. We survived night one. Tomorrow, we do a proper stakeout.", next: "ep2_start" },
+
+            // === EPISODE 2 ===
+            ep2_start: { speaker: "", text: "EPISODE 2: THE STAKEOUT. \nThe next morning, the sun is shining, but it feels artificially warm. You meet Amy behind the archery range.", next: "ep2_plan" },
+            ep2_plan: { speaker: "Amy", text: "New plan. The Director's cabin is heavily guarded during the day. We need to observe from afar. The camp store sells Binoculars for 25 Coins.", next: "ep2_hub" },
+            ep2_hub: {
+                speaker: "", text: "Gather enough coins and buy the Binoculars from the Shop.",
+                choices: [
+                    { text: "Start the Stakeout", next: "ep2_stakeout", requireItem: "Binoculars" },
+                    { text: "Search the dust for dropped coins", next: "ep2_grind1" }
+                ]
+            },
+            ep2_grind1: {
+                speaker: "", text: "You dig through the dirt near the vending machines.",
+                choices: [
+                    { text: "Keep searching", next: "ep2_grind2", coinChange: 3 },
+                    { text: "Return", next: "ep2_hub", coinChange: 2 }
+                ]
+            },
+            ep2_grind2: {
+                speaker: "", text: "You look under the wooden benches. Found a few more coins.",
+                choices: [
+                    { text: "Search the trash cans", next: "ep2_grind1", coinChange: 3 },
+                    { text: "Return", next: "ep2_hub", coinChange: 3 }
+                ]
+            },
+            ep2_stakeout: { speaker: "Amy", text: "Perfect, you got the Binoculars! Let's get up to the ridge.", next: "ep2_stakeout_b" },
+            ep2_stakeout_b: { speaker: "", text: "You raise the binoculars to your eyes and look at the back window of the cabin.", next: "ep2_q2" },
+            ep2_q2: {
+                speaker: "You", text: "(Looking carefully through the binoculars...)",
+                choices: [
+                    { text: "They're unloading crates of glowing green ooze into a vat!", next: "ep2_end_a", scoreChange: 30, coinChange: 5 },
+                    { text: "They're doing paperwork... wait, the paperwork is glowing.", next: "ep2_end_b", scoreChange: 10 }
+                ]
+            },
+            ep2_end_a: { speaker: "Amy", text: "I knew it! The biomass nutrient paste! This changes everything.", next: "ep2_complete" },
+            ep2_end_b: { speaker: "Amy", text: "Glowing paperwork? They must be using bioluminescent ink. They are evolving...", next: "ep2_complete" },
+            ep2_complete: { speaker: "Amy", text: "We've seen too much. We need to get back before they notice we're gone.", next: "ep3_start" },
+
+            // === EPISODE 3 ===
+            ep3_start: { speaker: "", text: "EPISODE 3: THE ANOMALY SKY. \nYou meet Amy inside her cabin. The interior is a mess of red string and blurry photos.", next: "ep3_plan" },
+            ep3_plan: { speaker: "Amy", text: "We need to send an aerial probe—a kite—to test if the sky is a localized projection. We need high-tension Strings to fly it.", next: "ep3_hub" },
+            ep3_hub: {
+                speaker: "", text: "You need to buy Strings from the Shop to proceed.",
+                choices: [
+                    { text: "Build the Kite", next: "ep3_kite", requireItem: "Strings", scoreChange: 30 },
+                    { text: "Search Cabin 5 for spare change", next: "ep3_grind1" }
+                ]
+            },
+            ep3_grind1: {
+                speaker: "", text: "You search under Amy's bunk bed and find coins.",
+                choices: [
+                    { text: "Keep searching", next: "ep3_hub", coinChange: 5 }
+                ]
+            },
+            ep3_kite: { speaker: "Amy", text: "Perfect! Let's assemble it and head to the clearing.", next: "ep3_flight" },
+            ep3_flight: { speaker: "", text: "The kite flies higher and higher... until it hits the sky with a loud electrical spark!", next: "ep4_start" },
+
+            // === EPISODE 4 ===
+            ep4_start: { speaker: "", text: "EPISODE 4: THE MECHANISM. \nThe kite crashes, dragging a metallic drone camera with it.", next: "ep4_cam" },
+            ep4_cam: { speaker: "Amy", text: "They were watching us from the 'sky'. But the casing is fused shut. We need a Screwdriver to bypass the latches.", next: "ep4_hub" },
+            ep4_hub: {
+                speaker: "", text: "You need a Screwdriver from the shop to begin the disassembly.",
+                choices: [
+                    { text: "Begin Disassembly (Skill Check)", next: "ep4_minigame_prep", requireItem: "Screwdriver" },
+                    { text: "Search the crater for coins", next: "ep4_grind1" }
+                ]
+            },
+            ep4_grind1: {
+                speaker: "", text: "You find some loose coins near the crash site.",
+                choices: [
+                    { text: "Return", next: "ep4_hub", coinChange: 5 }
+                ]
+            },
+            ep4_minigame_prep: { speaker: "Amy", text: "You have to bypass 10 security latches in a row. If you miss, the lock resets!", next: "ep4_trigger" },
+            ep4_trigger: {
+                speaker: "", text: "Get ready for the Skill Check. Press SPACEBAR when the moving line is inside the green zone!",
+                specialAction: "startSkillCheck"
+            },
+            ep4_success: { speaker: "Amy", text: "You did it! The final latch popped open! I can't believe you actually pulled that off.", next: "ep4_end" },
+            ep4_end: { speaker: "Amy", text: "This data drive has exactly what we need. We're going to blow the lid off this entire camp.", end: true },
+
+            drink_thanks: { speaker: "Amy", text: "*Gulp, gulp*... Ahh! Thank you so much! I was getting incredibly parched. I owe you one.", next: "RETURN" },
+
+            // ================= MINA ROUTE =================
+            mina_start: { speaker: "", text: "EPISODE 1: THE REBELLION.\nYou wander down to the old boathouse, looking for a way out of this creepy camp. Sitting on the edge of the dock is a girl in heavy combat boots and dark makeup.", next: "mina_node2" },
+            mina_node2: { speaker: "Mina", text: "You're walking too loud, camper. You'll wake up the lake monsters. Or worse, the counselors.", next: "mina_choice1" },
+            mina_choice1: { speaker: "You", text: "(She doesn't seem like the other brainwashed campers...)", choices: [
+                { text: "Lake monsters? Are you serious?", next: "mina_c1_a", scoreChange: 10 },
+                { text: "Nice boots.", next: "mina_c1_b", scoreChange: 20 },
+                { text: "We need to get out of here.", next: "mina_c1_c", scoreChange: 5 }
+            ]},
+            mina_c1_a: { speaker: "Mina", text: "Everything here is a monster, genius. I'm Mina. And you're currently standing on my dock.", next: "mina_node3" },
+            mina_c1_b: { speaker: "Mina", text: "Thanks. Good for kicking alien teeth in. I'm Mina.", next: "mina_node3" },
+            mina_c1_c: { speaker: "Mina", text: "Good luck with that. The perimeter is fenced with some invisible sci-fi nonsense. I'm Mina, by the way.", next: "mina_node3" },
+            mina_node3: { speaker: "Mina", text: "I've been sabotaging the camp's audio speakers so they can't broadcast their subliminal junk. But I dropped my multi-tool in the lake.", next: "mina_choice2" },
+            mina_choice2: { speaker: "You", text: "(Do I help her?)", choices: [
+                { text: "I can try to fish it out for you.", next: "mina_c2_a", scoreChange: 20, coinChange: 5 },
+                { text: "That sounds like a 'you' problem.", next: "mina_c2_b", scoreChange: -15 }
+            ]},
+            mina_c2_a: { speaker: "Mina", text: "Brave. Stupid, but brave. Don't touch the glowing algae.", next: "mina_end" },
+            mina_c2_b: { speaker: "Mina", text: "Whatever. Stay out of my way then, sheep.", next: "mina_end" },
+            mina_end: { speaker: "Mina", text: "If you want to survive the summer, stick with me. We're going to burn this synthetic camp to the ground.", end: true },
+            mina_drink_thanks: { speaker: "Mina", text: "Water? Thanks. Was getting tired of the 'electrolyte punch' they serve. It tastes like battery acid.", next: "RETURN" }
+        };
 
         // UI Management Functions
         function showScreen(screenId) {
@@ -523,39 +600,83 @@
             document.getElementById('ui-friend-bar').style.width = `${friendScore}%`;
             document.getElementById('ui-coins').innerText = `🟡 ${coins}`;
             
+            // Adjust HUD colors depending on route
+            const friendLabel = document.getElementById('ui-friend-label');
+            const friendBar = document.getElementById('ui-friend-bar');
+            const profileBtn = document.getElementById('profile-btn-color');
+            const nextBtn = document.getElementById('next-btn');
+
+            if (currentRoute === 'amy') {
+                friendLabel.className = "text-pink-400 uppercase text-sm";
+                friendBar.className = "bg-gradient-to-r from-pink-600 to-pink-400 h-full transition-all duration-700 ease-out";
+                profileBtn.className = "bg-pink-700 hover:bg-pink-600 text-white px-5 py-2 w-full rounded-xl font-bold border border-pink-400 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105";
+                if(nextBtn) nextBtn.classList.replace('bg-purple-600', 'bg-pink-600');
+                if(nextBtn) nextBtn.classList.replace('hover:bg-purple-500', 'hover:bg-pink-500');
+            } else {
+                friendLabel.className = "text-purple-400 uppercase text-sm";
+                friendBar.className = "bg-gradient-to-r from-purple-600 to-purple-400 h-full transition-all duration-700 ease-out";
+                profileBtn.className = "bg-purple-700 hover:bg-purple-600 text-white px-5 py-2 w-full rounded-xl font-bold border border-purple-400 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105";
+                if(nextBtn) nextBtn.classList.replace('bg-pink-600', 'bg-purple-600');
+                if(nextBtn) nextBtn.classList.replace('hover:bg-pink-500', 'hover:bg-purple-500');
+            }
+
+            // Profile logic
             if (friendScore >= 75 && !profileUnlocked) {
                 profileUnlocked = true;
                 document.getElementById('profile-btn-container').classList.remove('hidden');
-                showNotification("🎉 Amy's Profile Unlocked! Check your menu.");
+                const charName = currentRoute === 'amy' ? 'Amy' : 'Mina';
+                showNotification(`🎉 ${charName}'s Profile Unlocked! Check your menu.`);
             } else if (friendScore < 75) {
                 profileUnlocked = false;
                 document.getElementById('profile-btn-container').classList.add('hidden');
+            } else if (profileUnlocked) {
+                document.getElementById('profile-btn-container').classList.remove('hidden');
             }
         }
 
         function checkBackgroundAndDiaries() {
             const bgElement = document.getElementById('game-bg');
+            const spriteImg = document.getElementById('character-sprite-img');
+
+            // Route Specific Sprites
+            if (currentRoute === 'amy') {
+                spriteImg.src = "./image_44fc01.jpg";
+                spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/pink/white?text=Amy'");
+            } else {
+                spriteImg.src = "./mina.jpg";
+                spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/purple/white?text=Mina'");
+            }
             
-            if (currentNode.startsWith('start') || currentNode.startsWith('node') || currentNode.startsWith('c1') || currentNode.startsWith('c2') || currentNode.startsWith('c3') || currentNode.startsWith('c4')) {
+            // Dynamic Backgrounds
+            if (currentNode.startsWith('mina')) {
+                bgElement.src = "./bg_mina.jpg";
+            } else if (currentNode.startsWith('start') || currentNode.startsWith('node') || currentNode.startsWith('c1') || currentNode.startsWith('c2') || currentNode.startsWith('c3') || currentNode.startsWith('c4')) {
                 bgElement.src = "./bg_camp.jpg";
             } else if (currentNode === 'ep2_start') {
                 bgElement.src = "./bg_ridge.jpg";
-                unlockDiary(1, "Diary #1: The Arrival", "Day 1. The trees here are definitely fake. I met a girl named Amy who seems to know what's going on. We hid from Counselor Steve... his eyes were glowing yellow. I need to be careful.");
+                unlockDiary(1, "Diary #1: The Arrival", "Day 1. The trees here are definitely fake. I met Amy. We hid from Counselor Steve... his eyes were glowing yellow.");
             } else if (currentNode.startsWith('ep2')) {
                 bgElement.src = "./bg_ridge.jpg";
             } else if (currentNode === 'ep3_start') {
                 bgElement.src = "./bg_cabin.jpg";
-                unlockDiary(2, "Diary #2: The Stakeout", "Day 2. We staked out the Director's cabin using binoculars I bought from the camp store. We saw them unloading glowing green ooze! This camp is a front for something terrifying.");
-                unlockDiary(3, "Diary #3: Cabin 5", "Day 3. I went to Amy's cabin. It's filled with conspiracy boards and red strings. We're planning to fly a kite to test the atmospheric anomaly.");
+                unlockDiary(2, "Diary #2: The Stakeout", "Day 2. We staked out the Director's cabin and saw them unloading glowing green ooze!");
+                unlockDiary(3, "Diary #3: Cabin 5", "Day 3. I went to Amy's cabin. We're planning to fly a kite to test the atmospheric anomaly.");
             } else if (currentNode.startsWith('ep3')) {
                 bgElement.src = "./bg_cabin.jpg";
             } else if (currentNode === 'ep4_start') {
                 bgElement.src = "./bg_camp.jpg";
+                
+                // UNLOCK MINA HERE
+                if (!minaUnlocked) {
+                    minaUnlocked = true;
+                    localStorage.setItem('campOhioMinaUnlocked', 'true');
+                    showNotification("🔓 NEW CHARACTER UNLOCKED: Mina Monroe! Check the Home Screen.");
+                }
+
             } else if (currentNode.startsWith('ep4')) {
                 bgElement.src = "./bg_camp.jpg";
-                // Grant Diary 4 automatically when Episode 4 is almost done
                 if (currentNode === 'ep4_diary') {
-                    unlockDiary(4, "Diary #4: The Mechanism", "The kite knocked loose a strange drone camera from the 'sky'. I used my robotics competition experience to hack it open with a screwdriver. I completed 10 skill checks in a row! Amy was genuinely impressed, and we recovered a secret data drive.");
+                    unlockDiary(4, "Diary #4: The Mechanism", "The kite knocked loose a drone camera from the 'sky'. I hacked it open. Amy was genuinely impressed.");
                 }
             }
         }
@@ -564,27 +685,12 @@
             const exists = diaries.find(d => d.id === id);
             if (!exists) {
                 diaries.push({ id, title, content });
-                showNotification(`📖 Diary #${id} unlocked! Press SPACE to read it.`);
+                showNotification(`📖 Diary #${id} unlocked!`);
             }
-        }
-
-        // Core Game Logic
-        function startGame() {
-            currentNode = 'start';
-            previousNode = null;
-            friendScore = 0;
-            coins = 0;
-            inventory = [];
-            diaries = [];
-            
-            updateHUD();
-            renderNode();
-            showScreen('game-screen');
         }
 
         function renderNode() {
             const data = STORY[currentNode];
-            
             checkBackgroundAndDiaries();
 
             // Set Sprite Style
@@ -592,16 +698,19 @@
             if (data.speaker === 'You' || data.speaker === '') {
                 spriteContainer.className = "absolute bottom-[25%] left-[25%] -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10 scale-[0.90] brightness-[0.5] opacity-90 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]";
             } else {
-                spriteContainer.className = "absolute bottom-[25%] left-[25%] -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10 scale-105 brightness-110 drop-shadow-[0_10px_30px_rgba(236,72,153,0.4)]";
+                let glowColor = currentRoute === 'amy' ? "rgba(236,72,153,0.4)" : "rgba(168,85,247,0.4)";
+                spriteContainer.className = `absolute bottom-[25%] left-[25%] -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10 scale-105 brightness-110 drop-shadow-[0_10px_30px_${glowColor}]`;
             }
 
-            // Set Speaker
+            // Set Speaker Badge
             const speakerBadge = document.getElementById('speaker-name-badge');
             if (data.speaker) {
                 speakerBadge.classList.remove('hidden');
                 document.getElementById('speaker-name').innerText = data.speaker;
                 if (data.speaker === 'You') {
                     speakerBadge.className = "absolute -top-4 left-6 text-white px-5 py-1 rounded-lg text-sm font-bold border-2 tracking-wider shadow-lg bg-indigo-600 border-indigo-400";
+                } else if (data.speaker === 'Mina') {
+                    speakerBadge.className = "absolute -top-4 left-6 text-white px-5 py-1 rounded-lg text-sm font-bold border-2 tracking-wider shadow-lg bg-purple-600 border-purple-400";
                 } else {
                     speakerBadge.className = "absolute -top-4 left-6 text-white px-5 py-1 rounded-lg text-sm font-bold border-2 tracking-wider shadow-lg bg-pink-600 border-pink-400";
                 }
@@ -614,7 +723,7 @@
 
             // Water Offer Logic
             const actionContainer = document.getElementById('special-action-container');
-            if (inventory.includes('Water Bottle') && !inventory.includes('Water Bottle (Used)') && data.speaker === 'Amy') {
+            if (inventory.includes('Water Bottle') && !inventory.includes('Water Bottle (Used)') && (data.speaker === 'Amy' || data.speaker === 'Mina')) {
                 actionContainer.classList.remove('hidden');
             } else {
                 actionContainer.classList.add('hidden');
@@ -626,7 +735,11 @@
             const nextBtnText = document.getElementById('next-btn-text');
             const nextBtn = document.getElementById('next-btn');
             
-            choicesContainer.innerHTML = ''; // Clear old choices
+            choicesContainer.innerHTML = ''; 
+
+            let primaryBtnColor = currentRoute === 'amy' ? 'bg-pink-600' : 'bg-purple-600';
+            let hoverBtnColor = currentRoute === 'amy' ? 'hover:bg-pink-500' : 'hover:bg-purple-500';
+            let glowBtnColor = currentRoute === 'amy' ? 'rgba(219,39,119,0.5)' : 'rgba(168,85,247,0.5)';
 
             if (data.choices) {
                 choicesContainer.classList.remove('hidden');
@@ -641,7 +754,7 @@
                         btn.innerHTML = `${choice.text} <span class="text-yellow-500 ml-2">(🔒 Requires ${choice.requireItem})</span>`;
                         btn.disabled = true;
                     } else {
-                        btn.className = "w-full text-left px-4 py-2 sm:px-4 sm:py-3 rounded-xl transition-all duration-200 border shadow-md font-medium text-sm sm:text-base bg-slate-800/80 hover:bg-pink-600/90 text-slate-200 hover:text-white border-slate-600 hover:border-pink-300 hover:pl-6";
+                        btn.className = `w-full text-left px-4 py-2 sm:px-4 sm:py-3 rounded-xl transition-all duration-200 border shadow-md font-medium text-sm sm:text-base bg-slate-800/80 hover:text-white border-slate-600 hover:pl-6 ${currentRoute === 'amy' ? 'hover:bg-pink-600/90 hover:border-pink-300' : 'hover:bg-purple-600/90 hover:border-purple-300'} text-slate-200`;
                         btn.innerText = choice.text;
                         btn.onclick = () => handleChoice(choice);
                     }
@@ -663,7 +776,7 @@
                 choicesContainer.classList.add('hidden');
                 nextContainer.classList.remove('hidden');
                 nextBtnText.innerText = data.next === 'RETURN' ? 'Return to Conversation' : 'Next';
-                nextBtn.className = "bg-pink-600 hover:bg-pink-500 text-white px-8 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(219,39,119,0.5)] flex items-center gap-2 group text-base";
+                nextBtn.className = `${primaryBtnColor} ${hoverBtnColor} text-white px-8 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_${glowBtnColor}] flex items-center gap-2 group text-base`;
                 nextBtn.onclick = () => {
                     if (data.next === 'RETURN') {
                         currentNode = previousNode;
@@ -710,16 +823,14 @@
             document.getElementById('skill-check-modal').classList.remove('hidden');
             document.getElementById('skill-check-modal').classList.add('flex');
             skillHits = 0;
-            skillSpeed = 1.3; // Ensure constant moderate speed
+            skillSpeed = 1.3; 
             updateSkillUI();
             resetSkillRound();
             animateSkillCheck();
         }
 
         function resetSkillRound() {
-            // Target gets smaller with each success (min 8%)
             currentSkillTargetWidth = Math.max(8, 25 - (skillHits * 1.5)); 
-            // Randomize position to fit within 0-100%
             currentSkillTargetLeft = 5 + Math.random() * (90 - currentSkillTargetWidth);
             
             document.getElementById('skill-target').style.left = currentSkillTargetLeft + '%';
@@ -727,7 +838,6 @@
             
             cursorPosition = 0;
             cursorDirection = 1;
-            // The speed variable is kept constant now, not increasing per hit.
         }
 
         function animateSkillCheck() {
@@ -745,14 +855,12 @@
         }
 
         function hitSkillCheck() {
-            // Check if center of cursor is inside the target area
             if (cursorPosition >= currentSkillTargetLeft && cursorPosition <= (currentSkillTargetLeft + currentSkillTargetWidth)) {
-                // Success
                 skillHits++;
-                coins += 5; // Reward 5 coins for each successful hit
+                coins += 5; 
                 
                 updateSkillUI();
-                updateHUD(); // Show coins updating immediately
+                updateHUD(); 
                 
                 if (skillHits >= 10) {
                     winSkillCheck();
@@ -761,7 +869,6 @@
                     resetSkillRound();
                 }
             } else {
-                // Fail
                 failSkillCheck();
             }
         }
@@ -775,7 +882,6 @@
             document.getElementById('skill-check-modal').classList.add('hidden');
             document.getElementById('skill-check-modal').classList.remove('flex');
             
-            // Big reward for finishing the hack (alongside the final 5 coins already added)
             friendScore = Math.min(100, friendScore + 20);
             showScorePopup("PERFECT! +5 Coins & +20% Friendship", true);
             updateHUD();
@@ -790,16 +896,12 @@
             document.getElementById('skill-check-modal').classList.remove('flex');
             
             showScorePopup("FAILED! Mechanism Reset...", false);
-            
-            // Restart episode 4 penalty
             currentNode = 'ep4_start';
             renderNode();
         }
 
         function offerDrink() {
             friendScore = Math.min(100, friendScore + 10);
-            
-            // remove Water Bottle, add used
             inventory = inventory.filter(i => i !== 'Water Bottle');
             inventory.push('Water Bottle (Used)');
             
@@ -807,7 +909,7 @@
             showScorePopup("+10% Friendship (Offered Water)", true);
             
             previousNode = currentNode;
-            currentNode = 'drink_thanks';
+            currentNode = currentRoute === 'amy' ? 'drink_thanks' : 'mina_drink_thanks';
             renderNode();
         }
 
@@ -832,7 +934,6 @@
             document.getElementById('shop-modal').classList.add('flex');
             renderShop();
         }
-        
         function closeShop() {
             document.getElementById('shop-modal').classList.add('hidden');
             document.getElementById('shop-modal').classList.remove('flex');
@@ -866,8 +967,8 @@
                     coins -= item.price;
                     inventory.push(item.id);
                     updateHUD();
-                    renderShop(); // re-render to update buttons
-                    renderNode(); // re-render game logic to update choices
+                    renderShop(); 
+                    renderNode(); 
                     showScorePopup(`Bought ${item.id}!`, true);
                     
                     if (item.id === 'Secret Diary') {
@@ -883,10 +984,14 @@
         function getAllDiaries() {
             let all = [...diaries];
             if (inventory.includes('Secret Diary')) {
+                let secretNote = currentRoute === 'amy' 
+                    ? "If you're reading this, I trust you enough to share my personal stash of notes.\n\n- Counselor Steve's weakness: He needs to recharge his solar cells exactly at 3 AM.\n\nTrust no one else."
+                    : "Mina's scrawled notes:\n\n- The speakers are wired in series. Break one, you break the chain.\n- Keep an eye on the lake. The reflections don't match reality.";
+                
                 all.push({
                     id: 5,
-                    title: "Diary #5: Amy's Secret Notes",
-                    content: "If you're reading this, I trust you enough to share my personal stash of notes.\n\n- Counselor Steve's weakness: He needs to recharge his solar cells exactly at 3 AM.\n- Nutrient Paste: It's definitely an alien biomass designed to alter DNA.\n\nWe might be the only real humans left here. Trust no one else."
+                    title: `Diary #5: ${currentRoute === 'amy' ? "Amy's" : "Mina's"} Secret Notes`,
+                    content: secretNote
                 });
             }
             return all.sort((a, b) => a.id - b.id);
@@ -914,38 +1019,58 @@
                 });
             }
         }
-
         function closeDiary() {
             document.getElementById('diary-modal').classList.add('hidden');
             document.getElementById('diary-modal').classList.remove('flex');
         }
 
         function openProfile() {
+            const modalBox = document.getElementById('profile-modal-box');
+            
+            if (currentRoute === 'amy') {
+                modalBox.className = "bg-slate-900 border-4 border-pink-500 text-slate-200 w-full max-w-2xl rounded-3xl p-8 shadow-[0_0_50px_rgba(236,72,153,0.5)] relative";
+                document.getElementById('prof-header-name').className = "text-4xl font-black mb-6 border-b-2 border-slate-700 pb-4 text-pink-400";
+                document.getElementById('prof-img').src = "./image_44fc01.jpg";
+                document.getElementById('prof-name').innerText = "Amy";
+                document.getElementById('prof-loc').innerText = "Cabin 5";
+                document.getElementById('prof-traits').innerText = "Paranoid, brilliant, highly observant.";
+                document.getElementById('prof-secret-box').className = "bg-slate-800 p-4 rounded-xl border-l-4 border-pink-500 mt-4 shadow-inner";
+                document.getElementById('prof-secret-title').innerText = "Amy's Secret Sidenote:";
+                document.getElementById('prof-secret-title').className = "text-sm font-bold text-pink-400 uppercase tracking-widest mb-2";
+                document.getElementById('prof-secret-text').innerText = "\"The anomaly seems to be centered around the lake. I've noticed the water doesn't reflect the sky correctly.\"";
+            } else {
+                modalBox.className = "bg-slate-900 border-4 border-purple-500 text-slate-200 w-full max-w-2xl rounded-3xl p-8 shadow-[0_0_50px_rgba(168,85,247,0.5)] relative";
+                document.getElementById('prof-header-name').className = "text-4xl font-black mb-6 border-b-2 border-slate-700 pb-4 text-purple-400";
+                document.getElementById('prof-img').src = "./mina.jpg";
+                document.getElementById('prof-name').innerText = "Mina Monroe";
+                document.getElementById('prof-loc').innerText = "Old Boathouse";
+                document.getElementById('prof-traits').innerText = "Rebellious, goth, incredibly sarcastic.";
+                document.getElementById('prof-secret-box').className = "bg-slate-800 p-4 rounded-xl border-l-4 border-purple-500 mt-4 shadow-inner";
+                document.getElementById('prof-secret-title').innerText = "Mina's Secret Sidenote:";
+                document.getElementById('prof-secret-title').className = "text-sm font-bold text-purple-400 uppercase tracking-widest mb-2";
+                document.getElementById('prof-secret-text').innerText = "\"This camp is a prison, but I've already figured out the guard's patrol patterns. We break out soon.\"";
+            }
+
             document.getElementById('profile-modal').classList.remove('hidden');
             document.getElementById('profile-modal').classList.add('flex');
         }
-
         function closeProfile() {
             document.getElementById('profile-modal').classList.add('hidden');
             document.getElementById('profile-modal').classList.remove('flex');
         }
 
-        // Global Key Listener for Spacebar (Diary & Skill Check)
+        // Global Key Listener for Spacebar
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 e.preventDefault();
-                
-                // 1. Check if Skill Check modal is active
                 const skillModal = document.getElementById('skill-check-modal');
                 if (!skillModal.classList.contains('hidden')) {
                     hitSkillCheck();
-                    return; // Stop here so it doesn't open the diary
+                    return; 
                 }
 
-                // 2. Otherwise handle Diary toggle
                 const diaryModal = document.getElementById('diary-modal');
                 if (diaryModal.classList.contains('hidden')) {
-                    // Only open if in game or end screen
                     if (!document.getElementById('game-screen').classList.contains('hidden') || !document.getElementById('end-screen').classList.contains('hidden')) {
                         openDiary();
                     }
