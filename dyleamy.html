@@ -282,6 +282,23 @@
             <p class="text-slate-400 mt-6 font-bold uppercase tracking-widest animate-pulse text-sm text-center px-4">Press when the needle is inside the green zone!<br>Timing is slightly slower than hacking.</p>
         </div>
 
+        <!-- Color Memory Mini-game Modal -->
+        <div id="color-memory-modal" class="hidden absolute inset-0 z-[110] bg-slate-950/90 backdrop-blur-sm flex-col items-center justify-center fade-in">
+            <h2 class="text-3xl md:text-4xl font-black text-white mb-2 tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">MYSTERY COLOR BALL</h2>
+            <div class="text-xl md:text-2xl text-purple-300 font-bold mb-6" id="color-memory-status">Round 1 / 5</div>
+
+            <div id="color-memory-display" class="w-40 h-40 rounded-3xl bg-slate-800 border-4 border-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.4)] mb-8 flex items-center justify-center text-2xl font-black text-white">
+                <!-- Color preview here -->
+            </div>
+
+            <div id="color-memory-options" class="grid grid-cols-2 gap-4 w-full max-w-sm mb-6">
+                <!-- Buttons injected here -->
+            </div>
+
+            <button id="color-memory-skip" onclick="endColorMemoryGame(true)" class="bg-red-600 hover:bg-red-500 text-white px-10 py-3 rounded-2xl font-bold shadow-lg">Give Up</button>
+            <p class="text-slate-400 mt-6 font-bold uppercase tracking-widest animate-pulse text-sm text-center px-4">Remember the color, then pick the matching one. Complete all rounds for a bonus.</p>
+        </div>
+
         <!-- Shop Modal -->
         <div id="shop-modal" class="hidden absolute inset-0 z-[80] bg-black/60 backdrop-blur-sm items-center justify-center p-4 fade-in">
             <div class="bg-slate-900 border-4 border-indigo-500 rounded-2xl p-6 w-full max-w-md shadow-[0_0_30px_rgba(99,102,241,0.5)] flex flex-col max-h-[90vh]">
@@ -388,6 +405,15 @@
         let circTargetStart = 0;
         let circTargetSize = 50; 
         let circHits = 0;
+
+        // Color Memory Minigame State (Mina Route Episode 2)
+        let colorMemoryState = {
+            round: 0,
+            correct: 0,
+            target: null,
+            totalRounds: 5,
+            active: false
+        };
 
         // Initialize Menu Data
         function initMenu() {
@@ -550,12 +576,12 @@
 
         // Data for Game
         const SHOP_ITEMS = [
-            { id: 'Water Bottle', price: 5, desc: 'A refreshing drink. Good for making friends.' },
-            { id: 'Screwdriver', price: 10, desc: 'Essential for taking apart electronics.' },
-            { id: 'Strings', price: 15, desc: 'High-tension string. Needed to build a kite.' },
-            { id: 'Fishing Rod', price: 17, desc: 'A sturdy fiberglass rod. Good for catching... things.' },
-            { id: 'Binoculars', price: 25, desc: 'Essential for long-distance stakeouts.' },
-            { id: 'Secret Diary', price: 30, desc: 'Unlocks a special note in your Diary menu.' }
+            { id: 'Water Bottle', price: 5, icon: '🧴' },
+            { id: 'Screwdriver', price: 10, icon: '🔧' },
+            { id: 'Strings', price: 15, icon: '🪢' },
+            { id: 'Fishing Rod', price: 17, icon: '🎣' },
+            { id: 'Binoculars', price: 25, icon: '🔭' },
+            { id: 'Secret Diary', price: 30, icon: '📓' }
         ];
 
         const STORY = {
@@ -739,9 +765,13 @@
             },
             mina_success: { speaker: "Mina", text: "You actually got it! ...Ew, it's covered in that glowing slime. Thanks, I guess.", unlockProfile: true, next: "mina_roommate" },
             mina_fail: { speaker: "Mina", text: "You dropped it back in! Ugh, focus! Try again.", next: "mina_trigger" },
-            mina_roommate: { speaker: "Mina", text: "This place is driving me crazy. My roommate, Amy, is literally insane. She covers the walls in red string and won't stop muttering about 'biomass'.", next: "mina_end" },
-            mina_end: { speaker: "Mina", text: "Anyway, if you want to survive the summer, stick with me. We're going to burn this synthetic camp to the ground.", end: true },
-            
+            mina_roommate: { speaker: "Mina", text: "This place is driving me crazy. My roommate, Amy, is literally insane. She covers the walls in red string and won't stop muttering about 'biomass'.", next: "mina_ep2_intro" },
+            // Backwards compatibility for older saves
+            mina_end: { speaker: "Mina", text: "Anyway, if you want to survive the summer, stick with me. We're going to burn this synthetic camp to the ground.", next: "mina_ep2_intro" },
+            mina_ep2_intro: { speaker: "Mina", text: "Also... I found this strange glowing ball near the dock. It changes colors when you touch it. Want to see if it's some kind of game?", next: "mina_ep2_ball" },
+            mina_ep2_ball: { speaker: "", text: "You take the mystery ball. It hums softly and the colors shift beneath your skin. The ball seems to be waiting for you to start.", specialAction: "startColorMemoryGame" },
+            mina_ep2_complete: { speaker: "Mina", text: "Not bad. That thing was weirder than I thought. Now let's burn this place down.", unlockProfile: true, end: true },
+
             mina_drink_thanks: { speaker: "Mina", text: "Water? Thanks. Was getting tired of the 'electrolyte punch' they serve. It tastes like battery acid.", next: "RETURN" }
         };
 
@@ -833,8 +863,11 @@
             // Dynamic Backgrounds and Diary Unlocks
             if (currentNode.startsWith('mina')) {
                 bgElement.src = "./bg_mina.jpg";
-                if (currentNode === 'mina_end') {
+                if (currentNode === 'mina_ep2_intro') {
                     unlockDiary(7, "Diary #7: Mina & The Pond", "I helped Mina fish her multi-tool out of the pond. The algae was glowing. Also, she's Amy's roommate, which explains a lot. She seems incredibly annoyed by her.");
+                }
+                if (currentNode === 'mina_ep2_complete') {
+                    unlockDiary(8, "Diary #8: The Color Ball", "Mina found a mysterious ball that changes color. We played a weird memory game with it... I think it was testing us.");
                 }
             } else if (currentNode.startsWith('start') || currentNode.startsWith('node') || currentNode.startsWith('c1') || currentNode.startsWith('c2') || currentNode.startsWith('c3') || currentNode.startsWith('c4')) {
                 bgElement.src = "./bg_camp.jpg";
@@ -967,6 +1000,12 @@
                 nextBtnText.innerText = "Cast Line!";
                 nextBtn.className = "bg-purple-600 hover:bg-purple-500 text-white px-8 py-2 rounded-xl font-black transition-all shadow-[0_0_20px_rgba(168,85,247,0.8)] animate-pulse text-base flex items-center gap-2";
                 nextBtn.onclick = () => { startCircleSkillCheck(); };
+            } else if (data.specialAction === 'startColorMemoryGame') {
+                choicesContainer.classList.add('hidden');
+                nextContainer.classList.remove('hidden');
+                nextBtnText.innerText = "Start Memory Game";
+                nextBtn.className = "bg-purple-600 hover:bg-purple-500 text-white px-8 py-2 rounded-xl font-black transition-all shadow-[0_0_20px_rgba(168,85,247,0.8)] animate-pulse text-base flex items-center gap-2";
+                nextBtn.onclick = () => { startColorMemoryGame(); };
             } else if (data.end) {
                 choicesContainer.classList.add('hidden');
                 nextContainer.classList.remove('hidden');
@@ -1208,6 +1247,102 @@
             }
         }
 
+        // Color Memory Game Helpers (Mina Episode 2)
+        function startColorMemoryGame() {
+            // Give the player the mystery ball if they haven't received it yet.
+            if (!inventory.includes('Mystery Ball')) {
+                inventory.push('Mystery Ball');
+                showNotification('🟣 You received a Mystery Ball!');
+                updateHUD();
+            }
+
+            colorMemoryState.round = 1;
+            colorMemoryState.correct = 0;
+            colorMemoryState.active = true;
+            document.getElementById('color-memory-modal').classList.remove('hidden');
+            document.getElementById('color-memory-modal').classList.add('flex');
+            showNextColorMemoryRound();
+        }
+
+        function showNextColorMemoryRound() {
+            const colors = [
+                { name: 'Red', css: 'bg-red-500' },
+                { name: 'Green', css: 'bg-emerald-500' },
+                { name: 'Blue', css: 'bg-blue-500' },
+                { name: 'Yellow', css: 'bg-amber-400' }
+            ];
+            const round = colorMemoryState.round;
+            const target = colors[Math.floor(Math.random() * colors.length)];
+            colorMemoryState.target = target;
+
+            document.getElementById('color-memory-status').innerText = `Round ${round} / ${colorMemoryState.totalRounds}`;
+            const display = document.getElementById('color-memory-display');
+            display.className = `w-40 h-40 rounded-3xl border-4 border-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.4)] mb-8 flex items-center justify-center text-2xl font-black text-white ${target.css}`;
+            display.innerText = target.name;
+
+            const options = document.getElementById('color-memory-options');
+            options.innerHTML = '';
+
+            // Shuffle options so correct answer position changes
+            const shuffled = colors.sort(() => Math.random() - 0.5);
+            shuffled.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = `h-14 rounded-xl font-bold text-white shadow-lg transition-transform hover:scale-105 ${c.css}`;
+                btn.innerText = c.name;
+                btn.disabled = true;
+                btn.onclick = () => finishColorMemoryRound(c.name === target.name);
+                options.appendChild(btn);
+            });
+
+            // Hide the color name after a brief glimpse and enable answers
+            setTimeout(() => {
+                display.innerText = '';
+                const buttons = options.querySelectorAll('button');
+                buttons.forEach(b => b.disabled = false);
+            }, 1200);
+        }
+
+        function finishColorMemoryRound(isCorrect) {
+            if (!colorMemoryState.active) return;
+
+            if (isCorrect) {
+                colorMemoryState.correct += 1;
+                showScorePopup('+1 Correct', true);
+            } else {
+                showScorePopup('Wrong Color', false);
+            }
+
+            if (colorMemoryState.round >= colorMemoryState.totalRounds) {
+                endColorMemoryGame();
+            } else {
+                colorMemoryState.round += 1;
+                showNextColorMemoryRound();
+            }
+        }
+
+        function endColorMemoryGame(skipped = false) {
+            if (!colorMemoryState.active) return;
+            colorMemoryState.active = false;
+            document.getElementById('color-memory-modal').classList.add('hidden');
+            document.getElementById('color-memory-modal').classList.remove('flex');
+
+            if (!skipped) {
+                const perfect = colorMemoryState.correct === colorMemoryState.totalRounds;
+                if (perfect) {
+                    friendScore = Math.min(100, friendScore + 10);
+                    showScorePopup('+10% Friendship (Perfect Memory)', true);
+                } else {
+                    friendScore = Math.max(0, friendScore - 5);
+                    showScorePopup('-5% Friendship', false);
+                }
+                updateHUD();
+            }
+
+            // Proceed to end of Mina Episode 2
+            currentNode = 'mina_ep2_complete';
+            renderNode();
+        }
+
         // Modals Logic
         function openShop() {
             document.getElementById('shop-modal').classList.remove('hidden');
@@ -1233,8 +1368,7 @@
                 
                 div.innerHTML = `
                     <div>
-                        <div class="font-bold text-white text-lg">${item.id}</div>
-                        <div class="text-slate-400 text-sm leading-tight mt-1">${item.desc}</div>
+                        <div class="font-bold text-white text-lg">${item.icon} ${item.id}</div>
                     </div>
                 `;
                 
@@ -1375,7 +1509,7 @@
                 document.getElementById('prof-secret-box').className = "bg-slate-800 p-4 rounded-xl border-l-4 border-purple-500 mt-4 shadow-inner";
                 document.getElementById('prof-secret-title').innerText = "Mina's Secret Sidenote:";
                 document.getElementById('prof-secret-title').className = "text-sm font-bold text-purple-400 uppercase tracking-widest mb-2";
-                document.getElementById('prof-secret-text').innerText = "\"This camp is a prison, but I've already figured out the guard's patrol patterns. We break out soon.\"";
+                document.getElementById('prof-secret-text').innerText = "\"I hate this summer camp. My parents forced me here and I'm only sticking around because I want out. If you want to survive, don't trust the counselors.\"";
             }
 
             document.getElementById('profile-modal').classList.remove('hidden');
@@ -1400,6 +1534,7 @@
                 // Route to correct minigame if active
                 const skillModal = document.getElementById('skill-check-modal');
                 const circleModal = document.getElementById('skill-check-circle-modal');
+                const colorModal = document.getElementById('color-memory-modal');
                 
                 if (!skillModal.classList.contains('hidden')) {
                     hitSkillCheck();
@@ -1408,6 +1543,11 @@
                 
                 if (!circleModal.classList.contains('hidden')) {
                     hitCircleSkillCheck();
+                    return;
+                }
+
+                if (!colorModal.classList.contains('hidden')) {
+                    // Space does not interfere with the memory game.
                     return;
                 }
 
