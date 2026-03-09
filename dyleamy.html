@@ -90,15 +90,18 @@
             </div>
 
             <!-- Home Screen Action Buttons -->
-            <div class="relative z-10 mt-10 flex flex-wrap justify-center gap-4">
-                <button onclick="loadGame()" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 font-bold py-3 px-8 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:border-emerald-400">
-                    📂 Load Game
+            <div class="relative z-10 mt-10 flex flex-wrap justify-center gap-4 max-w-3xl">
+                <button onclick="openSaveLoadModal('load')" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 font-bold py-3 px-6 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:border-emerald-400">
+                    📂 Load
                 </button>
-                <button onclick="openProfileGallery()" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 font-bold py-3 px-8 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:border-indigo-400">
+                <button onclick="openProfileGallery()" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 font-bold py-3 px-6 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:border-indigo-400">
                     👥 Profiles
                 </button>
+                <button onclick="openDiary()" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 font-bold py-3 px-6 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:border-amber-400">
+                    📖 Diary
+                </button>
                 <button onclick="clearSave()" class="bg-slate-800 hover:bg-red-900/50 text-slate-400 border-2 border-slate-700 font-bold py-3 px-6 rounded-xl transition-all shadow-lg flex items-center gap-2 hover:text-red-400 hover:border-red-500">
-                    🗑️ Clear Save
+                    🗑️ Reset All
                 </button>
             </div>
         </div>
@@ -122,7 +125,6 @@
             </div>
 
             <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-600 text-lg font-bold py-3 px-10 rounded-xl transition-all hover:scale-105">Return to Menu</button>
-            <p class="mt-8 text-slate-500 uppercase tracking-widest font-bold text-sm">(Press Space to read Diaries)</p>
         </div>
 
         <!-- ================= MAIN GAME SCREEN ================= -->
@@ -164,7 +166,7 @@
                 <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-5 py-2 rounded-xl font-bold border border-slate-500 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 w-32">
                     🏠 Home
                 </button>
-                <button onclick="saveGame()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2 rounded-xl font-bold border border-emerald-500 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 w-32">
+                <button onclick="openSaveLoadModal('save')" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2 rounded-xl font-bold border border-emerald-500 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 w-32">
                     💾 Save
                 </button>
                 <button onclick="openShop()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-xl font-bold border border-indigo-400 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 w-32">
@@ -180,8 +182,8 @@
                 </div>
             </div>
 
-            <!-- Character Sprite -->
-            <div id="character-sprite-container" class="absolute bottom-[25%] left-[25%] -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10">
+            <!-- Character Sprite (Centered) -->
+            <div id="character-sprite-container" class="absolute bottom-[25%] left-1/2 -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10">
                 <img id="character-sprite-img" src="./image_44fc01.jpg" alt="Character" onerror="this.src='https://placehold.co/400x600/pink/white?text=Model'" class="h-full w-auto object-contain block rounded-xl" />
             </div>
 
@@ -218,6 +220,29 @@
         </div>
 
         <!-- ================= MODALS ================= -->
+
+        <!-- Save/Load Modal -->
+        <div id="save-load-modal" class="hidden absolute inset-0 z-[120] bg-black/80 backdrop-blur-md items-center justify-center p-6 fade-in">
+            <div class="bg-slate-900 border-4 border-slate-600 rounded-3xl p-8 w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] relative flex flex-col max-h-[90vh]">
+                <button onclick="closeSaveLoadModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white text-4xl font-bold">&times;</button>
+                <h2 id="save-load-title" class="text-4xl font-black text-white mb-8 border-b-2 border-slate-700 pb-4">Save Game</h2>
+                
+                <div class="flex flex-col gap-4">
+                    <button id="slot-btn-1" onclick="handleSlotClick(1)" class="w-full bg-slate-800 hover:bg-slate-700 text-left px-6 py-4 rounded-xl border-2 border-slate-600 transition-all font-bold text-lg text-white shadow-lg flex items-center gap-4">
+                        Slot 1 - EMPTY
+                    </button>
+                    <button id="slot-btn-2" onclick="handleSlotClick(2)" class="w-full bg-slate-800 hover:bg-slate-700 text-left px-6 py-4 rounded-xl border-2 border-slate-600 transition-all font-bold text-lg text-white shadow-lg flex items-center gap-4">
+                        Slot 2 - EMPTY
+                    </button>
+                    <button id="slot-btn-3" onclick="handleSlotClick(3)" class="w-full bg-slate-800 hover:bg-slate-700 text-left px-6 py-4 rounded-xl border-2 border-slate-600 transition-all font-bold text-lg text-white shadow-lg flex items-center gap-4">
+                        Slot 3 - EMPTY
+                    </button>
+                    <button id="slot-btn-4" onclick="handleSlotClick(4)" class="w-full bg-slate-800 hover:bg-slate-700 text-left px-6 py-4 rounded-xl border-2 border-slate-600 transition-all font-bold text-lg text-white shadow-lg flex items-center gap-4">
+                        Slot 4 - EMPTY
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Linear Skill Check Mini-game Modal (Hacking) -->
         <div id="skill-check-modal" class="hidden absolute inset-0 z-[110] bg-slate-950/90 backdrop-blur-sm flex-col items-center justify-center fade-in">
@@ -278,7 +303,7 @@
         <div id="diary-modal" class="hidden absolute inset-0 z-[100] bg-black/80 flex items-center justify-center p-6 backdrop-blur-md fade-in">
             <div class="bg-[#fdf6e3] text-slate-900 w-full max-w-3xl h-[85%] rounded-r-3xl rounded-l-md p-8 md:p-12 shadow-[inset_30px_0_30px_rgba(0,0,0,0.05),_0_0_50px_rgba(0,0,0,0.8)] border-l-[12px] border-amber-900 overflow-y-auto relative font-serif">
                 <div class="flex justify-between items-center border-b-2 border-amber-900/20 pb-4 mb-8 font-sans">
-                    <h2 class="text-4xl md:text-5xl font-black text-amber-900 flex items-center gap-3">My Camp Diary</h2>
+                    <h2 class="text-4xl md:text-5xl font-black text-amber-900 flex items-center gap-3">Camp Memories</h2>
                     <button onclick="closeDiary()" class="text-amber-900/60 hover:text-amber-900 text-4xl font-bold">&times;</button>
                 </div>
                 
@@ -324,6 +349,11 @@
             </div>
         </div>
 
+        <!-- WATERMARK -->
+        <div class="absolute bottom-2 right-4 z-[999] text-[10px] md:text-xs text-slate-400/50 font-bold uppercase tracking-widest pointer-events-none mix-blend-difference">
+            BUATAN MALAYSIA, Created by Hakimstudios 2026
+        </div>
+
     </div>
 
     <!-- ================= GAME LOGIC (JAVASCRIPT) ================= -->
@@ -332,13 +362,15 @@
         let currentRoute = 'amy';
         let minaUnlocked = false;
         let unlockedProfiles = [];
+        let globalDiaries = []; // Now saved globally
 
         let currentNode = 'start';
         let previousNode = null;
         let friendScore = 0;
         let coins = 0;
         let inventory = [];
-        let diaries = [];
+        
+        let saveLoadMode = 'save';
 
         // Linear Skill Check Variables (Hacking)
         let skillAnimFrame;
@@ -371,6 +403,12 @@
                 unlockedProfiles = JSON.parse(savedProfiles);
             }
 
+            // Load Global Diaries
+            const savedDiaries = localStorage.getItem('campOhioDiaries');
+            if (savedDiaries) {
+                globalDiaries = JSON.parse(savedDiaries);
+            }
+
             const minaLockedOverlay = document.getElementById('mina-locked');
             if (minaUnlocked) {
                 minaLockedOverlay.classList.add('hidden');
@@ -389,22 +427,64 @@
             }
         }
 
-        // Save & Load Functions
-        function saveGame() {
+        // --- Save / Load Modals (4 Slots) ---
+        function openSaveLoadModal(mode) {
+            saveLoadMode = mode;
+            document.getElementById('save-load-title').innerText = mode === 'save' ? 'Save Game' : 'Load Game';
+            document.getElementById('save-load-title').className = `text-4xl font-black mb-8 border-b-2 border-slate-700 pb-4 ${mode === 'save' ? 'text-emerald-400' : 'text-blue-400'}`;
+            
+            renderSaveSlots();
+            document.getElementById('save-load-modal').classList.remove('hidden');
+            document.getElementById('save-load-modal').classList.add('flex');
+        }
+
+        function closeSaveLoadModal() {
+            document.getElementById('save-load-modal').classList.add('hidden');
+            document.getElementById('save-load-modal').classList.remove('flex');
+        }
+
+        function renderSaveSlots() {
+            for (let i = 1; i <= 4; i++) {
+                let slotData = localStorage.getItem('campOhioSaveSlot_' + i);
+                let btn = document.getElementById('slot-btn-' + i);
+                
+                // Set hover colors based on mode
+                let hoverColor = saveLoadMode === 'save' ? 'hover:border-emerald-500 hover:text-emerald-300' : 'hover:border-blue-500 hover:text-blue-300';
+                btn.className = `w-full bg-slate-800 hover:bg-slate-700 text-left px-6 py-4 rounded-xl border-2 border-slate-600 transition-all font-bold text-lg text-white shadow-lg flex items-center justify-between ${hoverColor}`;
+
+                if (slotData) {
+                    let parsed = JSON.parse(slotData);
+                    let routeName = parsed.currentRoute === 'amy' ? 'Amy' : 'Mina';
+                    btn.innerHTML = `<span>Slot ${i} - Route: ${routeName}</span> <span class="text-sm font-normal text-slate-400">Friendship: ${parsed.friendScore}% | 🟡 ${parsed.coins}</span>`;
+                } else {
+                    btn.innerHTML = `Slot ${i} - EMPTY`;
+                }
+            }
+        }
+
+        function handleSlotClick(i) {
+            if (saveLoadMode === 'save') {
+                saveToSlot(i);
+            } else {
+                loadFromSlot(i);
+            }
+        }
+
+        function saveToSlot(i) {
             const saveState = {
                 currentRoute,
                 currentNode,
                 friendScore,
                 coins,
-                inventory,
-                diaries
+                inventory
             };
-            localStorage.setItem('campOhioSaveData', JSON.stringify(saveState));
-            showNotification("💾 Game Progress Saved Successfully!");
+            localStorage.setItem('campOhioSaveSlot_' + i, JSON.stringify(saveState));
+            showNotification(`💾 Saved Progress to Slot ${i}!`);
+            closeSaveLoadModal();
         }
 
-        function loadGame() {
-            const savedData = localStorage.getItem('campOhioSaveData');
+        function loadFromSlot(i) {
+            const savedData = localStorage.getItem('campOhioSaveSlot_' + i);
             if (savedData) {
                 try {
                     const state = JSON.parse(savedData);
@@ -413,33 +493,32 @@
                     friendScore = state.friendScore || 0;
                     coins = state.coins || 0;
                     inventory = state.inventory || [];
-                    diaries = state.diaries || [];
-
-                    // Legacy profile state check (for older saves)
-                    if (state.profileUnlocked && !unlockedProfiles.includes(currentRoute)) {
-                        unlockGlobalProfile(currentRoute);
-                    }
 
                     showScreen('game-screen');
                     updateHUD();
                     renderNode();
-                    showNotification("📂 Game Loaded!");
+                    showNotification(`📂 Game Loaded from Slot ${i}!`);
+                    closeSaveLoadModal();
                 } catch (e) {
                     showNotification("❌ Error loading save data.");
                 }
             } else {
-                showNotification("❌ No saved game found.");
+                showNotification(`❌ Slot ${i} is empty!`);
             }
         }
 
         function clearSave() {
-            localStorage.removeItem('campOhioSaveData');
+            for(let i=1; i<=4; i++) {
+                localStorage.removeItem('campOhioSaveSlot_' + i);
+            }
             localStorage.removeItem('campOhioMinaUnlocked');
             localStorage.removeItem('campOhioProfiles');
+            localStorage.removeItem('campOhioDiaries');
             minaUnlocked = false;
             unlockedProfiles = [];
+            globalDiaries = [];
             
-            showNotification("🗑️ Save data and Unlocks cleared! Refreshing...");
+            showNotification("🗑️ All Saves, Diaries, and Unlocks cleared! Refreshing...");
             setTimeout(() => { window.location.reload(); }, 1500);
         }
 
@@ -463,7 +542,6 @@
             friendScore = 0;
             coins = 0;
             inventory = [];
-            diaries = [];
             
             updateHUD();
             renderNode();
@@ -616,8 +694,8 @@
                 speaker: "", text: "Get ready for the Skill Check. Press SPACEBAR when the moving line is inside the green zone!",
                 specialAction: "startSkillCheck"
             },
-            ep4_success: { speaker: "Amy", text: "You did it! The final latch popped open! I can't believe you actually pulled that off.", unlockProfile: true, next: "ep4_end" },
-            ep4_end: { speaker: "Amy", text: "This data drive has exactly what we need. We're going to blow the lid off this entire camp.", end: true },
+            ep4_success: { speaker: "Amy", text: "You did it! The final latch popped open! I can't believe you actually pulled that off.", unlockProfile: true, next: "ep4_diary" },
+            ep4_diary: { speaker: "Amy", text: "This data drive has exactly what we need. We're going to blow the lid off this entire camp.", end: true },
 
             drink_thanks: { speaker: "Amy", text: "*Gulp, gulp*... Ahh! Thank you so much! I was getting incredibly parched. I owe you one.", next: "RETURN" },
 
@@ -789,11 +867,13 @@
             }
         }
 
+        // Global Diary Unlock
         function unlockDiary(id, title, content) {
-            const exists = diaries.find(d => d.id === id);
+            const exists = globalDiaries.find(d => d.id === id);
             if (!exists) {
-                diaries.push({ id, title, content });
-                showNotification(`📖 Diary #${id} unlocked!`);
+                globalDiaries.push({ id, title, content });
+                localStorage.setItem('campOhioDiaries', JSON.stringify(globalDiaries));
+                showNotification(`📖 Memory Unlocked: ${title}`);
             }
         }
 
@@ -808,13 +888,13 @@
 
             checkBackgroundAndDiaries();
 
-            // Set Sprite Style
+            // Set Sprite Style (Centered left-1/2 instead of left-[25%])
             const spriteContainer = document.getElementById('character-sprite-container');
             if (data.speaker === 'You' || data.speaker === '') {
-                spriteContainer.className = "absolute bottom-[25%] left-[25%] -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10 scale-[0.90] brightness-[0.5] opacity-90 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]";
+                spriteContainer.className = "absolute bottom-[25%] left-1/2 -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10 scale-[0.90] brightness-[0.5] opacity-90 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]";
             } else {
                 let glowColor = currentRoute === 'amy' ? "rgba(236,72,153,0.4)" : "rgba(168,85,247,0.4)";
-                spriteContainer.className = `absolute bottom-[25%] left-[25%] -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10 scale-105 brightness-110 drop-shadow-[0_10px_30px_${glowColor}]`;
+                spriteContainer.className = `absolute bottom-[25%] left-1/2 -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10 scale-105 brightness-110 drop-shadow-[0_10px_30px_${glowColor}]`;
             }
 
             // Set Speaker Badge
@@ -1027,7 +1107,7 @@
             document.getElementById('skill-check-circle-modal').classList.remove('hidden');
             document.getElementById('skill-check-circle-modal').classList.add('flex');
             circHits = 0;
-            circSpeed = 2.0; // Slower timing as requested
+            circSpeed = 2.0; 
             updateCircleSkillUI();
             resetCircleSkillRound();
             animateCircleSkillCheck();
@@ -1054,14 +1134,13 @@
         }
 
         function hitCircleSkillCheck() {
-            // Check if current angle falls inside the target wedge
             if (circAngle >= circTargetStart && circAngle <= (circTargetStart + circTargetSize)) {
                 circHits++;
                 coins += 5;
                 updateCircleSkillUI();
                 updateHUD();
                 
-                if (circHits >= 3) { // Require 3 successful reels
+                if (circHits >= 3) { 
                     winCircleSkillCheck();
                 } else {
                     showScorePopup("GOOD REEL! +5 Coins", true);
@@ -1183,8 +1262,10 @@
         }
 
         function getAllDiaries() {
-            let all = [...diaries];
-            if (inventory.includes('Secret Diary')) {
+            let all = [...globalDiaries];
+            
+            // Only show secret diaries if viewing from inside an active game with the item
+            if (inventory.includes('Secret Diary') && document.getElementById('start-screen').classList.contains('hidden')) {
                 let secretNote = currentRoute === 'amy' 
                     ? "If you're reading this, I trust you enough to share my personal stash of notes.\n\n- Counselor Steve's weakness: He needs to recharge his solar cells exactly at 3 AM.\n\nTrust no one else."
                     : "Mina's scrawled notes:\n\n- The speakers are wired in series. Break one, you break the chain.\n- Keep an eye on the lake. The reflections don't match reality.";
@@ -1207,7 +1288,7 @@
             
             const allD = getAllDiaries();
             if (allD.length === 0) {
-                container.innerHTML = '<p class="italic text-slate-500 text-xl text-center mt-20">No entries yet... Finish an episode to generate a memory.</p>';
+                container.innerHTML = '<p class="italic text-slate-500 text-xl text-center mt-20">No memories unlocked yet... Start playing to unlock them.</p>';
             } else {
                 allD.forEach(d => {
                     const div = document.createElement('div');
@@ -1301,7 +1382,6 @@
             document.getElementById('profile-modal').classList.add('flex');
         }
 
-        // Wrapper function to open profile directly from the HUD
         function openProfile() {
             openSpecificProfile(currentRoute);
         }
