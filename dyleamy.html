@@ -1345,17 +1345,6 @@
             showSequencePlayback();
         }
 
-            const pads = document.querySelectorAll('.simon-pad');
-            pads.forEach(pad => {
-                pad.disabled = true;
-                pad.classList.remove('brightness-150', 'shadow-[0_0_50px_rgba(255,255,255,0.9)]');
-                pad.onclick = () => handleSequenceInput(pad.dataset.color);
-            });
-
-            document.getElementById('color-memory-instructions').innerText = 'Watch the sequence...';
-            showSequencePlayback();
-        }
-
         function showSequencePlayback() {
             const seq = colorMemoryState.sequence;
             let idx = 0;
