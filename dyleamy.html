@@ -1619,15 +1619,23 @@
                     
                     if (item.id === 'Secret Diary') {
                         showNotification("📖 Secret Diary unlocked in your menu!");
-                            if (currentRoute === 'amy') {
-                                siblingsUnlocked = true;
-                                localStorage.setItem('campOhioSiblingsUnlocked', 'true');
-                                const siblingsLockedOverlay = document.getElementById('siblings-locked');
-                                if (siblingsLockedOverlay) siblingsLockedOverlay.classList.add('hidden');
-                                showNotification("🔓 New Route Unlocked: Siblings!");
-                            }
-            
-            // Only show secret diaries if viewing from inside an active game with the item
+                        if (currentRoute === 'amy') {
+                            siblingsUnlocked = true;
+                            localStorage.setItem('campOhioSiblingsUnlocked', 'true');
+                            const siblingsLockedOverlay = document.getElementById('siblings-locked');
+                            if (siblingsLockedOverlay) siblingsLockedOverlay.classList.add('hidden');
+                            showNotification("🔓 New Route Unlocked: Siblings!");
+                        }
+                    }
+                };
+                
+                div.appendChild(btn);
+                container.appendChild(div);
+            });
+        }
+
+        function getAllDiaries() {
+            const all = [...globalDiaries];
             if (inventory.includes('Secret Diary') && document.getElementById('start-screen').classList.contains('hidden')) {
                 let secretNote = currentRoute === 'amy' 
                     ? "If you're reading this, I trust you enough to share my personal stash of notes.\n\n- Counselor Steve's weakness: He needs to recharge his solar cells exactly at 3 AM.\n\nTrust no one else."
