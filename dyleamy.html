@@ -411,7 +411,9 @@
             round: 0,
             correct: 0,
             target: null,
-            totalRounds: 5,
+            sequence: [],
+            inputIndex: 0,
+            totalRounds: 10,
             active: false
         };
 
@@ -1063,7 +1065,9 @@
             document.getElementById('skill-check-modal').classList.remove('hidden');
             document.getElementById('skill-check-modal').classList.add('flex');
             skillHits = 0;
-            skillSpeed = 1.3; 
+            // Make Amy's Episode 4 skillcheck 30% slower for added challenge
+            const baseSpeed = 1.3;
+            skillSpeed = (currentNode === 'ep4_trigger') ? baseSpeed * 0.7 : baseSpeed;
             updateSkillUI();
             resetSkillRound();
             animateSkillCheck();
@@ -1247,7 +1251,7 @@
             }
         }
 
-        // Color Memory Game Helpers (Mina Episode 2)
+        // Color Memory Sequence Game (Mina Episode 2)
         function startColorMemoryGame() {
             // Give the player the mystery ball if they haven't received it yet.
             if (!inventory.includes('Mystery Ball')) {
@@ -1258,65 +1262,110 @@
 
             colorMemoryState.round = 1;
             colorMemoryState.correct = 0;
+            colorMemoryState.sequence = [];
+            colorMemoryState.inputIndex = 0;
             colorMemoryState.active = true;
             document.getElementById('color-memory-modal').classList.remove('hidden');
             document.getElementById('color-memory-modal').classList.add('flex');
-            showNextColorMemoryRound();
+            playNextSequenceRound();
         }
 
-        function showNextColorMemoryRound() {
-            const colors = [
-                { name: 'Red', css: 'bg-red-500' },
+        function getPaletteForRound(round) {
+            const baseColors = [
                 { name: 'Green', css: 'bg-emerald-500' },
                 { name: 'Blue', css: 'bg-blue-500' },
+                { name: 'Red', css: 'bg-red-500' },
                 { name: 'Yellow', css: 'bg-amber-400' }
             ];
+            const purple = { name: 'Purple', css: 'bg-purple-500' };
+            const orange = { name: 'Orange', css: 'bg-orange-400' };
+
+            if (round <= 3) {
+                return [...baseColors];
+            } else if (round <= 6) {
+                return [...baseColors, purple];
+            } else {
+                return [...baseColors, purple, orange];
+            }
+        }
+
+        function playNextSequenceRound() {
             const round = colorMemoryState.round;
-            const target = colors[Math.floor(Math.random() * colors.length)];
-            colorMemoryState.target = target;
+            const palette = getPaletteForRound(round);
+            const nextColor = palette[Math.floor(Math.random() * palette.length)];
+            colorMemoryState.sequence.push(nextColor);
+            colorMemoryState.inputIndex = 0;
 
             document.getElementById('color-memory-status').innerText = `Round ${round} / ${colorMemoryState.totalRounds}`;
-            const display = document.getElementById('color-memory-display');
-            display.className = `w-40 h-40 rounded-3xl border-4 border-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.4)] mb-8 flex items-center justify-center text-2xl font-black text-white ${target.css}`;
-            display.innerText = target.name;
-
             const options = document.getElementById('color-memory-options');
             options.innerHTML = '';
 
-            // Shuffle options so correct answer position changes
-            const shuffled = colors.sort(() => Math.random() - 0.5);
-            shuffled.forEach(c => {
+            // Build buttons based on current palette
+            palette.forEach(c => {
                 const btn = document.createElement('button');
                 btn.className = `h-14 rounded-xl font-bold text-white shadow-lg transition-transform hover:scale-105 ${c.css}`;
                 btn.innerText = c.name;
                 btn.disabled = true;
-                btn.onclick = () => finishColorMemoryRound(c.name === target.name);
+                btn.onclick = () => handleSequenceInput(c.name);
                 options.appendChild(btn);
             });
 
-            // Hide the color name after a brief glimpse and enable answers
-            setTimeout(() => {
-                display.innerText = '';
-                const buttons = options.querySelectorAll('button');
-                buttons.forEach(b => b.disabled = false);
-            }, 1200);
+            // Show sequence to player
+            showSequencePlayback();
         }
 
-        function finishColorMemoryRound(isCorrect) {
+        function showSequencePlayback() {
+            const display = document.getElementById('color-memory-display');
+            const seq = colorMemoryState.sequence;
+            let idx = 0;
+
+            // Disable buttons while showing sequence
+            const buttons = document.querySelectorAll('#color-memory-options button');
+            buttons.forEach(b => b.disabled = true);
+
+            const playNext = () => {
+                if (idx >= seq.length) {
+                    display.innerText = '';
+                    buttons.forEach(b => b.disabled = false);
+                    return;
+                }
+
+                const color = seq[idx];
+                display.className = `w-40 h-40 rounded-3xl border-4 border-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.4)] mb-8 flex items-center justify-center text-2xl font-black text-white ${color.css}`;
+                display.innerText = color.name;
+
+                idx += 1;
+                setTimeout(() => {
+                    display.innerText = '';
+                    setTimeout(playNext, 400);
+                }, 700);
+            };
+
+            playNext();
+        }
+
+        function handleSequenceInput(selected) {
             if (!colorMemoryState.active) return;
 
-            if (isCorrect) {
-                colorMemoryState.correct += 1;
-                showScorePopup('+1 Correct', true);
+            const expected = colorMemoryState.sequence[colorMemoryState.inputIndex].name;
+            if (selected === expected) {
+                colorMemoryState.inputIndex += 1;
+
+                if (colorMemoryState.inputIndex >= colorMemoryState.sequence.length) {
+                    // Completed round
+                    colorMemoryState.correct += 1;
+                    showScorePopup('+1 Round Complete', true);
+
+                    if (colorMemoryState.round >= colorMemoryState.totalRounds) {
+                        endColorMemoryGame();
+                    } else {
+                        colorMemoryState.round += 1;
+                        playNextSequenceRound();
+                    }
+                }
             } else {
                 showScorePopup('Wrong Color', false);
-            }
-
-            if (colorMemoryState.round >= colorMemoryState.totalRounds) {
                 endColorMemoryGame();
-            } else {
-                colorMemoryState.round += 1;
-                showNextColorMemoryRound();
             }
         }
 
