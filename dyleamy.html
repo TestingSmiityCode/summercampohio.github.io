@@ -87,6 +87,25 @@
                         Start Route
                     </button>
                 </div>
+
+                <!-- Character: Siblings -->
+                <div id="siblings-card" class="bg-slate-900/90 p-6 rounded-3xl border-2 border-emerald-500/40 flex flex-col items-center shadow-[0_0_30px_rgba(34,197,94,0.15)] w-64 relative overflow-hidden">
+                    
+                    <!-- Locked Overlay -->
+                    <div id="siblings-locked" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center text-center p-4 cursor-not-allowed">
+                        <span class="text-5xl mb-3">🔒</span>
+                        <span class="text-emerald-400 font-bold text-sm uppercase tracking-widest">Buy Secret Diary<br>on Amy's Route</span>
+                    </div>
+
+                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-emerald-500 mb-4 bg-slate-800">
+                        <img src="./janet.jpg" alt="Janet" onerror="this.src='https://placehold.co/400x600/green/white?text=Janet'" class="w-full h-full object-cover" />
+                    </div>
+                    <h3 class="text-2xl font-black text-emerald-400 mb-1">Siblings</h3>
+                    <p class="text-slate-400 text-xs mb-6 text-center h-12">Scout Duo<br>Route: The Campfire Mystery</p>
+                    <button onclick="startRoute('siblings')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 px-6 rounded-xl transition-all shadow-lg hover:scale-105 border border-emerald-400 uppercase tracking-widest text-sm">
+                        Start Route
+                    </button>
+                </div>
             </div>
 
             <!-- Home Screen Action Buttons -->
@@ -385,6 +404,7 @@
         // Global Game State
         let currentRoute = 'amy';
         let minaUnlocked = false;
+        let siblingsUnlocked = false;
         let unlockedProfiles = [];
         let globalDiaries = []; // Now saved globally
 
@@ -427,9 +447,15 @@
         // Initialize Menu Data
         function initMenu() {
             // Load Mina's route status
-            const savedUnlock = localStorage.getItem('campOhioMinaUnlocked');
-            if (savedUnlock === 'true') {
+            const savedMinaUnlock = localStorage.getItem('campOhioMinaUnlocked');
+            if (savedMinaUnlock === 'true') {
                 minaUnlocked = true;
+            }
+
+            // Load Siblings route status
+            const savedSiblingsUnlock = localStorage.getItem('campOhioSiblingsUnlocked');
+            if (savedSiblingsUnlock === 'true') {
+                siblingsUnlocked = true;
             }
             
             // Load Unlocked Character Profiles
@@ -450,6 +476,13 @@
             } else {
                 minaLockedOverlay.classList.remove('hidden');
             }
+
+            const siblingsLockedOverlay = document.getElementById('siblings-locked');
+            if (siblingsUnlocked) {
+                siblingsLockedOverlay.classList.add('hidden');
+            } else {
+                siblingsLockedOverlay.classList.remove('hidden');
+            }
         }
 
         // Global Profile Unlock Function
@@ -457,7 +490,16 @@
             if (!unlockedProfiles.includes(charId)) {
                 unlockedProfiles.push(charId);
                 localStorage.setItem('campOhioProfiles', JSON.stringify(unlockedProfiles));
-                const charName = charId === 'amy' ? 'Amy' : 'Mina';
+
+                let charName = 'Unknown';
+                switch (charId) {
+                    case 'amy': charName = 'Amy'; break;
+                    case 'mina': charName = 'Mina'; break;
+                    case 'janet': charName = 'Janet'; break;
+                    case 'bob': charName = 'Bob'; break;
+                    case 'siblings': charName = 'Siblings'; break;
+                }
+
                 showNotification(`🎉 ${charName}'s Profile Unlocked! Check the gallery.`);
             }
         }
@@ -489,7 +531,7 @@
 
                 if (slotData) {
                     let parsed = JSON.parse(slotData);
-                    let routeName = parsed.currentRoute === 'amy' ? 'Amy' : 'Mina';
+                    let routeName = parsed.currentRoute === 'amy' ? 'Amy' : (parsed.currentRoute === 'mina' ? 'Mina' : 'Siblings');
                     btn.innerHTML = `<span>Slot ${i} - Route: ${routeName}</span> <span class="text-sm font-normal text-slate-400">Friendship: ${parsed.friendScore}% | 🟡 ${parsed.coins}</span>`;
                 } else {
                     btn.innerHTML = `Slot ${i} - EMPTY`;
@@ -529,6 +571,11 @@
                     coins = state.coins || 0;
                     inventory = state.inventory || [];
 
+                    if (currentRoute === 'siblings') {
+                        siblingsUnlocked = true;
+                        localStorage.setItem('campOhioSiblingsUnlocked', 'true');
+                    }
+
                     showScreen('game-screen');
                     updateHUD();
                     renderNode();
@@ -547,9 +594,11 @@
                 localStorage.removeItem('campOhioSaveSlot_' + i);
             }
             localStorage.removeItem('campOhioMinaUnlocked');
+            localStorage.removeItem('campOhioSiblingsUnlocked');
             localStorage.removeItem('campOhioProfiles');
             localStorage.removeItem('campOhioDiaries');
             minaUnlocked = false;
+            siblingsUnlocked = false;
             unlockedProfiles = [];
             globalDiaries = [];
             
@@ -570,8 +619,13 @@
                 return; 
             }
 
+            if (routeStr === 'siblings' && !siblingsUnlocked) {
+                showNotification("🔒 Buy the Secret Diary from Amy's route to unlock this story.");
+                return;
+            }
+
             currentRoute = routeStr;
-            currentNode = (routeStr === 'amy') ? 'start' : 'mina_start';
+            currentNode = (routeStr === 'amy') ? 'start' : (routeStr === 'mina' ? 'mina_start' : 'siblings_start');
             
             previousNode = null;
             friendScore = 0;
@@ -781,6 +835,30 @@
             mina_ep2_ball: { speaker: "", text: "You take the mystery ball. It hums softly and shifts colors like some old memory toy. The challenge is simple: repeat the growing pattern to win.", specialAction: "startColorMemoryGame" },
             mina_ep2_complete: { speaker: "Mina", text: "Not bad. That thing was weirder than I thought. Now let's burn this place down.", unlockProfile: true, end: true },
 
+            // ================= SIBLINGS ROUTE =================
+            siblings_start: { speaker: "", text: "EPISODE 1: CAMPFIRE MYSTERY.\nYou stumble upon two campers sitting at a small campfire, wearing matching scout neckerchiefs. Their faces light up when they see you approach.", next: "siblings_intro" },
+            siblings_intro: { speaker: "Janet", text: "Hiya! I'm Janet, and this is my brother Bob. We just got our 'Helpful Scout' badges. What brings you to our campfire?", next: "siblings_choice1" },
+            siblings_choice1: { speaker: "You", text: "(They seem nice, but you can tell they don't know what's really going on.)", choices: [
+                { text: "We were just checking out the grounds. You guys look like you're having fun.", next: "siblings_friendly", scoreChange: 15 },
+                { text: "Actually, something weird is going on here... like, really weird.", next: "siblings_suspicious", scoreChange: -10 },
+                { text: "I heard Amy failed the campfire competition. That's rough.", next: "siblings_amy_fail", scoreChange: 5 }
+            ]},
+            siblings_friendly: { speaker: "Janet", text: "That's what we like to hear! Scouts should be friendly. Want some cookies?", next: "siblings_cookie_offer" },
+            siblings_suspicious: { speaker: "Janet", text: "Weird? The camp is just... normal. Maybe you need to get more sleep?", next: "siblings_cookie_offer" },
+            siblings_amy_fail: { speaker: "Janet", text: "Amy? She totally flubbed the skit. She was supposed to lead the campfire song and forgot the lyrics. Bob almost laughed!", next: "siblings_cookie_offer" },
+            siblings_cookie_offer: { speaker: "Bob", text: "Hey, do you want some of our trail mix? We were going to offer it to Amy but she was in a mood.", choices: [
+                { text: "Sure, thanks." , next: "siblings_accept_mix", scoreChange: 10 },
+                { text: "No thanks, I'm fine.", next: "siblings_decline_mix", scoreChange: -5 }
+            ]},
+            siblings_accept_mix: { speaker: "Bob", text: "Cool! We're trying to earn our 'Camp Counselor' badge, so we keep an eye on everyone. Keep it on the down low though—Janet hates when people know too much.", next: "siblings_water_prompt" },
+            siblings_decline_mix: { speaker: "Bob", text: "Fine, your loss. Janet says being hospitable is important, but whatever.", next: "siblings_water_prompt" },
+            siblings_water_prompt: { speaker: "Janet", text: "Actually, you seem kind of thirsty. Want some water?", next: "siblings_after_water" },
+            siblings_after_water: { speaker: "Janet", text: "...We can’t accept drinks from strangers. Sorry, it’s a scout rule.", next: "siblings_ep1_complete" },
+            siblings_ep1_complete: { speaker: "Bob", text: "Anyway, you should head back before the counselors notice you missing. We'll be around the lake if you want to hang later.", unlockProfile: 'bob', next: "siblings_bob_entry" },
+            siblings_bob_entry: { speaker: "Bob", text: "Also, don't tell anyone, but I saw Amy sneaking around the director's cabin last night. She looked terrified.", next: "siblings_amy_arrival" },
+            siblings_amy_arrival: { speaker: "Amy", text: "What are you two doing out here? If you tell anyone about the 'campfire incidents' I'll have to... deal with it.", next: "siblings_end" },
+            siblings_end: { speaker: "", text: "The fire crackles. You nod and quietly agree to keep your mouth shut, even as the strange feeling in your gut grows.", end: true },
+
             mina_drink_thanks: { speaker: "Mina", text: "Water? Thanks. Was getting tired of the 'electrolyte punch' they serve. It tastes like battery acid.", next: "RETURN" }
         };
 
@@ -840,6 +918,13 @@
                     unlockGlobalProfile('amy');
                 }
 
+            } else if (currentRoute === 'siblings') {
+                friendLabel.className = "text-emerald-400 uppercase text-sm";
+                friendBar.className = "bg-gradient-to-r from-emerald-600 to-emerald-400 h-full transition-all duration-700 ease-out";
+                profileBtn.className = "bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2 w-full rounded-xl font-bold border border-emerald-400 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105";
+                if(nextBtn) nextBtn.classList.replace('bg-purple-600', 'bg-emerald-600');
+                if(nextBtn) nextBtn.classList.replace('hover:bg-purple-500', 'hover:bg-emerald-500');
+
             } else {
                 friendLabel.className = "text-purple-400 uppercase text-sm";
                 friendBar.className = "bg-gradient-to-r from-purple-600 to-purple-400 h-full transition-all duration-700 ease-out";
@@ -864,9 +949,21 @@
             if (currentRoute === 'amy') {
                 spriteImg.src = "./image_44fc01.jpg";
                 spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/pink/white?text=Amy'");
-            } else {
+            } else if (currentRoute === 'mina') {
                 spriteImg.src = "./mina.jpg";
                 spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/purple/white?text=Mina'");
+            } else if (currentRoute === 'siblings') {
+                // Default sprite is Janet; switch to Bob when he joins; show Amy when she appears.
+                if (currentNode === 'siblings_bob_entry' || currentNode.startsWith('siblings_bob_')) {
+                    spriteImg.src = "./bob.jpg";
+                    spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/blue/white?text=Bob'");
+                } else if (currentNode === 'siblings_amy_arrival' || currentNode.startsWith('siblings_amy_')) {
+                    spriteImg.src = "./image_44fc01.jpg";
+                    spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/pink/white?text=Amy'");
+                } else {
+                    spriteImg.src = "./janet.jpg";
+                    spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/green/white?text=Janet'");
+                }
             }
             
             // Dynamic Backgrounds and Diary Unlocks
@@ -877,6 +974,11 @@
                 }
                 if (currentNode === 'mina_ep2_complete') {
                     unlockDiary(8, "Diary #8: The Color Ball", "Mina found a mysterious ball that changes color. We played a weird memory game with it... I think it was testing us.");
+                }
+            } else if (currentRoute === 'siblings') {
+                bgElement.src = "./bg_siblings.jpg";
+                if (currentNode === 'siblings_ep1_complete') {
+                    unlockDiary(9, "Diary #9: Campfire Fiasco", "Janet and Bob are just normal scouts. They have no idea this place is fake. Amy is terrified of them finding out.");
                 }
             } else if (currentNode.startsWith('start') || currentNode.startsWith('node') || currentNode.startsWith('c1') || currentNode.startsWith('c2') || currentNode.startsWith('c3') || currentNode.startsWith('c4')) {
                 bgElement.src = "./bg_camp.jpg";
@@ -924,7 +1026,8 @@
             
             // Handle Direct Node Profile Unlocks
             if (data.unlockProfile) {
-                unlockGlobalProfile(currentRoute);
+                const profileId = typeof data.unlockProfile === 'string' ? data.unlockProfile : currentRoute;
+                unlockGlobalProfile(profileId);
                 updateHUD();
             }
 
@@ -935,7 +1038,14 @@
             if (data.speaker === 'You' || data.speaker === '') {
                 spriteContainer.className = "absolute bottom-[25%] left-1/2 -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10 scale-[0.90] brightness-[0.5] opacity-90 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]";
             } else {
-                let glowColor = currentRoute === 'amy' ? "rgba(236,72,153,0.4)" : "rgba(168,85,247,0.4)";
+                let glowColor;
+                if (currentRoute === 'amy') {
+                    glowColor = "rgba(236,72,153,0.4)";
+                } else if (currentRoute === 'siblings') {
+                    glowColor = "rgba(34,197,94,0.4)";
+                } else {
+                    glowColor = "rgba(168,85,247,0.4)";
+                }
                 spriteContainer.className = `absolute bottom-[25%] left-1/2 -translate-x-1/2 h-[70%] transition-all duration-300 ease-in-out origin-bottom z-10 scale-105 brightness-110 drop-shadow-[0_10px_30px_${glowColor}]`;
             }
 
@@ -960,7 +1070,7 @@
 
             // Water Offer Logic
             const actionContainer = document.getElementById('special-action-container');
-            if (inventory.includes('Water Bottle') && !inventory.includes('Water Bottle (Used)') && (data.speaker === 'Amy' || data.speaker === 'Mina')) {
+            if (inventory.includes('Water Bottle') && !inventory.includes('Water Bottle (Used)') && (data.speaker === 'Amy' || data.speaker === 'Mina' || data.speaker === 'Janet' || data.speaker === 'Bob')) {
                 actionContainer.classList.remove('hidden');
             } else {
                 actionContainer.classList.add('hidden');
@@ -1231,6 +1341,21 @@
 
         // ================= GENERAL SYSTEMS ================= //
         function offerDrink() {
+            // Siblings reject the offer; it hurts friendship.
+            if (currentRoute === 'siblings') {
+                friendScore = Math.max(0, friendScore - 20);
+                inventory = inventory.filter(i => i !== 'Water Bottle');
+                inventory.push('Water Bottle (Used)');
+
+                updateHUD();
+                showScorePopup("-20% Friendship (Rejected Water)", false);
+
+                previousNode = currentNode;
+                currentNode = 'siblings_after_water';
+                renderNode();
+                return;
+            }
+
             friendScore = Math.min(100, friendScore + 10);
             inventory = inventory.filter(i => i !== 'Water Bottle');
             inventory.push('Water Bottle (Used)');
@@ -1494,16 +1619,13 @@
                     
                     if (item.id === 'Secret Diary') {
                         showNotification("📖 Secret Diary unlocked in your menu!");
-                    }
-                };
-                
-                div.appendChild(btn);
-                container.appendChild(div);
-            });
-        }
-
-        function getAllDiaries() {
-            let all = [...globalDiaries];
+                            if (currentRoute === 'amy') {
+                                siblingsUnlocked = true;
+                                localStorage.setItem('campOhioSiblingsUnlocked', 'true');
+                                const siblingsLockedOverlay = document.getElementById('siblings-locked');
+                                if (siblingsLockedOverlay) siblingsLockedOverlay.classList.add('hidden');
+                                showNotification("🔓 New Route Unlocked: Siblings!");
+                            }
             
             // Only show secret diaries if viewing from inside an active game with the item
             if (inventory.includes('Secret Diary') && document.getElementById('start-screen').classList.contains('hidden')) {
@@ -1558,7 +1680,9 @@
             
             const allChars = [
                 { id: 'amy', name: 'Amy', img: './image_44fc01.jpg', border: 'border-pink-500/50', hover: 'hover:border-pink-400', text: 'text-pink-400', iconBorder: 'border-pink-400' },
-                { id: 'mina', name: 'Mina', img: './mina.jpg', border: 'border-purple-500/50', hover: 'hover:border-purple-400', text: 'text-purple-400', iconBorder: 'border-purple-400' }
+                { id: 'mina', name: 'Mina', img: './mina.jpg', border: 'border-purple-500/50', hover: 'hover:border-purple-400', text: 'text-purple-400', iconBorder: 'border-purple-400' },
+                { id: 'janet', name: 'Janet', img: './janet.jpg', border: 'border-emerald-500/50', hover: 'hover:border-emerald-400', text: 'text-emerald-400', iconBorder: 'border-emerald-400' },
+                { id: 'bob', name: 'Bob', img: './bob.jpg', border: 'border-sky-500/50', hover: 'hover:border-sky-400', text: 'text-sky-400', iconBorder: 'border-sky-400' }
             ];
             
             allChars.forEach(char => {
@@ -1617,6 +1741,28 @@
                 document.getElementById('prof-secret-title').innerText = "Mina's Secret Sidenote:";
                 document.getElementById('prof-secret-title').className = "text-sm font-bold text-purple-400 uppercase tracking-widest mb-2";
                 document.getElementById('prof-secret-text').innerText = "\"I hate this summer camp. My parents forced me here and I'm only sticking around because I want out. If you want to survive, don't trust the counselors.\"";
+            } else if (charId === 'janet') {
+                modalBox.className = "bg-slate-900 border-4 border-emerald-500 text-slate-200 w-full max-w-2xl rounded-3xl p-8 shadow-[0_0_50px_rgba(34,197,94,0.5)] relative";
+                document.getElementById('prof-header-name').className = "text-4xl font-black mb-6 border-b-2 border-slate-700 pb-4 text-emerald-400";
+                document.getElementById('prof-img').src = "./janet.jpg";
+                document.getElementById('prof-name').innerText = "Janet Reeves";
+                document.getElementById('prof-loc').innerText = "Campfire Circle";
+                document.getElementById('prof-traits').innerHTML = "Friendly, responsible, always ready with a first-aid kit.<br><br><strong class='text-emerald-300'>Relationships:</strong> Brother Bob (Overprotective)";
+                document.getElementById('prof-secret-box').className = "bg-slate-800 p-4 rounded-xl border-l-4 border-emerald-500 mt-4 shadow-inner";
+                document.getElementById('prof-secret-title').innerText = "Janet's Secret Sidenote:";
+                document.getElementById('prof-secret-title').className = "text-sm font-bold text-emerald-400 uppercase tracking-widest mb-2";
+                document.getElementById('prof-secret-text').innerText = "\"I'm just here to earn my camper badge. But something about that girl (Amy) and you feels... off. I don't like secrets.\"";
+            } else if (charId === 'bob') {
+                modalBox.className = "bg-slate-900 border-4 border-sky-500 text-slate-200 w-full max-w-2xl rounded-3xl p-8 shadow-[0_0_50px_rgba(56,189,248,0.5)] relative";
+                document.getElementById('prof-header-name').className = "text-4xl font-black mb-6 border-b-2 border-slate-700 pb-4 text-sky-400";
+                document.getElementById('prof-img').src = "./bob.jpg";
+                document.getElementById('prof-name').innerText = "Bob Reeves";
+                document.getElementById('prof-loc').innerText = "Campfire Circle";
+                document.getElementById('prof-traits').innerHTML = "Eager, a bit naive, but loyal to his sister.<br><br><strong class='text-sky-300'>Relationships:</strong> Sister Janet (Protects her fiercely)";
+                document.getElementById('prof-secret-box').className = "bg-slate-800 p-4 rounded-xl border-l-4 border-sky-500 mt-4 shadow-inner";
+                document.getElementById('prof-secret-title').innerText = "Bob's Secret Sidenote:";
+                document.getElementById('prof-secret-title').className = "text-sm font-bold text-sky-400 uppercase tracking-widest mb-2";
+                document.getElementById('prof-secret-text').innerText = "\"I just wanna earn my badges and roast marshmallows. Still, I couldn't shake the feeling that something's wrong with this camp.\"";
             }
 
             document.getElementById('profile-modal').classList.remove('hidden');
