@@ -979,47 +979,19 @@
             const siblingsSprites = document.getElementById('siblings-sprites');
 
             // Route Specific Sprites
-            if (currentRoute === 'siblings') {
-                // Show only Janet + Bob initially, then add Amy when she speaks.
-                spriteImg.classList.add('hidden');
-                siblingsSprites.style.display = 'flex';
-
-                const janet = document.getElementById('sprite-janet');
-                const bob = document.getElementById('sprite-bob');
-                const amy = document.getElementById('sprite-amy');
-
-                // Ensure images are reloaded (fixes cases where the src wasn't applied)
-                janet.src = "./janet.jpg";
-                bob.src = "./bob.jpg";
-                amy.src = "./image_44fc01.jpg";
-
-                janet.style.display = 'block';
-                bob.style.display = 'block';
-
-                const amyDialogue = currentNode === 'siblings_amy_arrival' || currentNode.startsWith('siblings_amy_');
-                if (amyDialogue) {
-                    amy.style.display = 'block';
-                    amy.style.opacity = '1';
-                    siblingsSprites.classList.add('amy-in');
-                } else {
-                    amy.style.display = 'none';
-                    amy.style.opacity = '0';
-                    siblingsSprites.classList.remove('amy-in');
-                }
-
-            } else {
-                // Default to a single sprite for other routes
-                spriteImg.classList.remove('hidden');
-                siblingsSprites.classList.add('hidden');
-
-                if (currentRoute === 'amy') {
+            
+            if (currentRoute === 'amy') {
                     spriteImg.src = "./image_44fc01.jpg";
                     spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/pink/white?text=Amy'");
                 } else if (currentRoute === 'mina') {
                     spriteImg.src = "./mina.jpg";
                     spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/purple/white?text=Mina'");
+                } else if (currentRoute === 'siblings') {
+                    spriteImg.src = "./janet.jpg";
+                    spriteImg.src = "./bob.jpg";
+                    spriteImg.src = "./image_44fc01.jpg";
+                    spriteImg.setAttribute('onerror', "this.src='https://placehold.co/400x600/green/white?text=Janet+%26+Bob+%26Amy'");
                 }
-            }
             
             // Dynamic Backgrounds and Diary Unlocks
             if (currentNode.startsWith('mina')) {
