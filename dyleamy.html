@@ -637,7 +637,7 @@
             
             previousNode = null;
             friendScore = 0;
-            coins = 0;
+            coins = (routeStr === 'siblings') ? 10 : 0; // Give siblings route a small starting coin boost
             inventory = [];
             
             updateHUD();
@@ -957,12 +957,12 @@
             // Route Specific Sprites
             if (currentRoute === 'siblings') {
                 // Show all sibling-route characters at once
-                spriteImg.classList.add('hidden');
-                siblingsSprites.classList.remove('hidden');
+                spriteImg.style.display = 'none';
+                siblingsSprites.style.display = 'flex';
             } else {
                 // Default to a single sprite for other routes
-                spriteImg.classList.remove('hidden');
-                siblingsSprites.classList.add('hidden');
+                spriteImg.style.display = 'block';
+                siblingsSprites.style.display = 'none';
 
                 if (currentRoute === 'amy') {
                     spriteImg.src = "./image_44fc01.jpg";
