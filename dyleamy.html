@@ -124,8 +124,8 @@
                     <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-emerald-500 mb-4 bg-slate-800">
                         <img src="./janet.jpg" alt="Janet" onerror="this.src='https://placehold.co/400x600/green/white?text=Janet'" class="w-full h-full object-cover" />
                     </div>
-                    <h3 class="text-2xl font-black text-emerald-400 mb-1">Siblings</h3>
-                    <p class="text-slate-400 text-xs mb-6 text-center h-12">Scout Duo<br>Route: The Campfire Mystery</p>
+                    <h3 class="text-2xl font-black text-emerald-400 mb-1">Janet</h3>
+                    <p class="text-slate-400 text-xs mb-6 text-center h-12">Scout Leader<br>Route: Janet's Path</p>
                     <button onclick="startRoute('siblings')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 px-6 rounded-xl transition-all shadow-lg hover:scale-105 border border-emerald-400 uppercase tracking-widest text-sm">
                         Start Route
                     </button>
@@ -519,6 +519,12 @@
 
         // Global Profile Unlock Function
         function unlockGlobalProfile(charId) {
+            // Support unlocking multiple profiles at once
+            if (Array.isArray(charId)) {
+                charId.forEach(id => unlockGlobalProfile(id));
+                return;
+            }
+
             if (!unlockedProfiles.includes(charId)) {
                 unlockedProfiles.push(charId);
                 localStorage.setItem('campOhioProfiles', JSON.stringify(unlockedProfiles));
@@ -563,7 +569,7 @@
 
                 if (slotData) {
                     let parsed = JSON.parse(slotData);
-                    let routeName = parsed.currentRoute === 'amy' ? 'Amy' : (parsed.currentRoute === 'mina' ? 'Mina' : 'Siblings');
+                    let routeName = parsed.currentRoute === 'amy' ? 'Amy' : (parsed.currentRoute === 'mina' ? 'Mina' : 'Janet');
                     btn.innerHTML = `<span>Slot ${i} - Route: ${routeName}</span> <span class="text-sm font-normal text-slate-400">Friendship: ${parsed.friendScore}% | 🟡 ${parsed.coins}</span>`;
                 } else {
                     btn.innerHTML = `Slot ${i} - EMPTY`;
@@ -652,7 +658,7 @@
             }
 
             if (routeStr === 'siblings' && !siblingsUnlocked) {
-                showNotification("🔒 Buy the Secret Diary from Amy's route to unlock this story.");
+                showNotification("🔒 Buy the Secret Diary from Amy's route to unlock Janet's Route.");
                 return;
             }
 
@@ -867,29 +873,28 @@
             mina_ep2_ball: { speaker: "", text: "You take the mystery ball. It hums softly and shifts colors like some old memory toy. The challenge is simple: repeat the growing pattern to win.", specialAction: "startColorMemoryGame" },
             mina_ep2_complete: { speaker: "Mina", text: "Not bad. That thing was weirder than I thought. Now let's burn this place down.", unlockProfile: true, end: true },
 
-            // ================= SIBLINGS ROUTE =================
-            siblings_start: { speaker: "", text: "EPISODE 1: CAMPFIRE MYSTERY.\nYou stumble upon two campers sitting at a small campfire, wearing matching scout neckerchiefs. Their faces light up when they see you approach.", next: "siblings_intro" },
-            siblings_intro: { speaker: "Janet", text: "Hiya! I'm Janet, and this is my brother Bob. We just got our 'Helpful Scout' badges. What brings you to our campfire?", next: "siblings_choice1" },
-            siblings_choice1: { speaker: "You", text: "(They seem nice, but you can tell they don't know what's really going on.)", choices: [
-                { text: "We were just checking out the grounds. You guys look like you're having fun.", next: "siblings_friendly", scoreChange: 15 },
-                { text: "Actually, something weird is going on here... like, really weird.", next: "siblings_suspicious", scoreChange: -10 },
-                { text: "I heard Amy failed the campfire competition. That's rough.", next: "siblings_amy_fail", scoreChange: 5 }
+            // ================= JANET ROUTE =================
+            siblings_start: { speaker: "", text: "EPISODE 1: JANET'S CAMPFIRE.\nYou stumble upon two campers sitting at a small campfire, wearing matching scout neckerchiefs. Their faces brighten when they spot you.", next: "siblings_intro" },
+            siblings_intro: { speaker: "Janet", text: "Hey there! I'm Janet, and this is my little brother Bob. We're on camp patrol tonight, so stay close and keep your voice down.", next: "siblings_choice1" },
+            siblings_choice1: { speaker: "You", text: "(They look like they take the Scout Code very seriously. Maybe they'll share a secret.)", choices: [
+                { text: "I just wanted to see the campfire. It looks cozy.", next: "siblings_friendly", scoreChange: 15 },
+                { text: "This place gives me the creeps. Are you sure it's safe?", next: "siblings_suspicious", scoreChange: -5 },
+                { text: "What badges are you working on?", next: "siblings_badge", scoreChange: 10 }
             ]},
-            siblings_friendly: { speaker: "Janet", text: "That's what we like to hear! Scouts should be friendly. Want some cookies?", next: "siblings_cookie_offer" },
-            siblings_suspicious: { speaker: "Janet", text: "Weird? The camp is just... normal. Maybe you need to get more sleep?", next: "siblings_cookie_offer" },
-            siblings_amy_fail: { speaker: "Janet", text: "Amy? She totally flubbed the skit. She was supposed to lead the campfire song and forgot the lyrics. Bob almost laughed!", next: "siblings_cookie_offer" },
-            siblings_cookie_offer: { speaker: "Bob", text: "Hey, do you want some of our trail mix? We were going to offer it to Amy but she was in a mood.", choices: [
-                { text: "Sure, thanks." , next: "siblings_accept_mix", scoreChange: 10 },
+            siblings_friendly: { speaker: "Janet", text: "Cozy is good. Bob and I keep watch so no one wanders off after lights-out. Want some of our trail mix?", next: "siblings_cookie_offer" },
+            siblings_suspicious: { speaker: "Janet", text: "You don't need to worry. Bob has a sixth sense for trouble. Here, warm up with some trail mix while we chat.", next: "siblings_cookie_offer" },
+            siblings_badge: { speaker: "Janet", text: "We're earning our 'Helpful Scout' badge. Bob found the recipe for this mix. If you help us keep an eye out, we'll tell you about a glowing sign near the lake.", next: "siblings_cookie_offer" },
+            siblings_cookie_offer: { speaker: "Bob", text: "Yeah! Want some of our special trail mix? We made too much. Janet says sharing is part of being a good scout.", choices: [
+                { text: "Sure, thanks.", next: "siblings_accept_mix", scoreChange: 10 },
                 { text: "No thanks, I'm fine.", next: "siblings_decline_mix", scoreChange: -5 }
             ]},
-            siblings_accept_mix: { speaker: "Bob", text: "Cool! We're trying to earn our 'Camp Counselor' badge, so we keep an eye on everyone. Keep it on the down low though—Janet hates when people know too much.", next: "siblings_water_prompt" },
-            siblings_decline_mix: { speaker: "Bob", text: "Fine, your loss. Janet says being hospitable is important, but whatever.", next: "siblings_water_prompt" },
-            siblings_water_prompt: { speaker: "Janet", text: "Actually, you seem kind of thirsty. Want some water?", next: "siblings_after_water" },
-            siblings_after_water: { speaker: "Janet", text: "...We can’t accept drinks from strangers. Sorry, it’s a scout rule.", next: "siblings_ep1_complete" },
-            siblings_ep1_complete: { speaker: "Bob", text: "Anyway, you should head back before the counselors notice you missing. We'll be around the lake if you want to hang later.", unlockProfile: 'bob', next: "siblings_bob_entry" },
-            siblings_bob_entry: { speaker: "Bob", text: "Also, don't tell anyone, but I saw Amy sneaking around the director's cabin last night. She looked terrified.", next: "siblings_amy_arrival" },
-            siblings_amy_arrival: { speaker: "Amy", text: "What are you two doing out here? If you tell anyone about the 'campfire incidents' I'll have to... deal with it.", next: "siblings_end" },
-            siblings_end: { speaker: "", text: "The fire crackles. You nod and quietly agree to keep your mouth shut, even as the strange feeling in your gut grows.", end: true },
+            siblings_accept_mix: { speaker: "Bob", text: "Nice. We keep an eye on the camp so the counselors don't miss anything. Janet hates it when people get too curious, though.", next: "siblings_water_prompt" },
+            siblings_decline_mix: { speaker: "Bob", text: "Fine, your loss. Janet says being a scout means being kind. Hope you don't get thirsty later.", next: "siblings_water_prompt" },
+            siblings_water_prompt: { speaker: "Janet", text: "Actually, you did look thirsty. Want some water?", next: "siblings_after_water" },
+            siblings_after_water: { speaker: "Janet", text: "...We can’t accept drinks from strangers. Sorry, it’s a scout rule. But thanks for offering — you look like a good person.", unlockProfile: ['janet','bob'], next: "siblings_after_rejection" },
+            siblings_after_rejection: { speaker: "Bob", text: "Alright, keep your eyes peeled. There's supposed to be an old fishing sign near the dock that glows at midnight. If you see it, come find us.", next: "siblings_ep1_complete" },
+            siblings_ep1_complete: { speaker: "Bob", text: "For now, head back before the counselors start their rounds. We'll be around the lake if you want to trade stories later.", next: "siblings_end" },
+            siblings_end: { speaker: "", text: "The fire crackles. You nod and quietly agree to keep your distance, but you can't shake the feeling that the lake is hiding something.", end: true },
 
             mina_drink_thanks: { speaker: "Mina", text: "Water? Thanks. Was getting tired of the 'electrolyte punch' they serve. It tastes like battery acid.", next: "RETURN" }
         };
@@ -966,7 +971,11 @@
             }
 
             // HUD Profile Button visibility
-            if (unlockedProfiles.includes(currentRoute)) {
+            const hasProfileAccess = currentRoute === 'siblings'
+                ? unlockedProfiles.some(id => ['janet','bob','siblings'].includes(id))
+                : unlockedProfiles.includes(currentRoute);
+
+            if (hasProfileAccess) {
                 document.getElementById('profile-btn-container').classList.remove('hidden');
             } else {
                 document.getElementById('profile-btn-container').classList.add('hidden');
@@ -1003,7 +1012,7 @@
             } else if (currentRoute === 'siblings') {
                 bgElement.src = "./bg_siblings.jpg";
                 if (currentNode === 'siblings_ep1_complete') {
-                    unlockDiary(9, "Diary #9: Campfire Fiasco", "Janet and Bob are just normal scouts. They have no idea this place is fake. Amy is terrified of them finding out.");
+                    unlockDiary(9, "Diary #9: Campfire Fiasco", "Janet and Bob are just normal scouts. They have no idea this place is fake. I wonder what they think they're protecting.");
                 }
             } else if (currentNode.startsWith('start') || currentNode.startsWith('node') || currentNode.startsWith('c1') || currentNode.startsWith('c2') || currentNode.startsWith('c3') || currentNode.startsWith('c4')) {
                 bgElement.src = "./bg_camp.jpg";
@@ -1051,8 +1060,12 @@
             
             // Handle Direct Node Profile Unlocks
             if (data.unlockProfile) {
-                const profileId = typeof data.unlockProfile === 'string' ? data.unlockProfile : currentRoute;
-                unlockGlobalProfile(profileId);
+                if (Array.isArray(data.unlockProfile)) {
+                    unlockGlobalProfile(data.unlockProfile);
+                } else {
+                    const profileId = typeof data.unlockProfile === 'string' ? data.unlockProfile : currentRoute;
+                    unlockGlobalProfile(profileId);
+                }
                 updateHUD();
             }
 
@@ -1803,7 +1816,9 @@
         }
 
         function openProfile() {
-            openSpecificProfile(currentRoute);
+            // Janet route uses 'siblings' internally, but the profile should open Janet's details.
+            const profileRoute = currentRoute === 'siblings' ? 'janet' : currentRoute;
+            openSpecificProfile(profileRoute);
         }
 
         function closeProfile() {
