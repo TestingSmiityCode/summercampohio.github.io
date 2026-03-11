@@ -35,7 +35,12 @@
 
         /* Siblings route group sprites */
         #siblings-sprites {
+            display: none;
             transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        #siblings-sprites img {
+            max-height: 70%;
+            max-width: 26%;
         }
         #siblings-sprites.amy-in #sprite-janet {
             transform: translateX(-14%);
@@ -226,10 +231,10 @@
                 <img id="character-sprite-img" src="./image_44fc01.jpg" alt="Character" onerror="this.src='https://placehold.co/400x600/pink/white?text=Model'" class="h-full w-auto object-contain block rounded-xl" />
 
                 <!-- Siblings Route Group Sprite (show Janet + Bob first, add Amy later) -->
-                <div id="siblings-sprites" class="hidden absolute inset-0 flex items-end justify-center gap-3">
+                <div id="siblings-sprites" style="display: none;" class="absolute inset-0 flex items-end justify-center gap-3">
                     <img id="sprite-janet" src="./janet.jpg" alt="Janet" onerror="this.src='https://placehold.co/400x600/green/white?text=Janet'" class="h-full w-auto object-contain rounded-xl shadow-lg transition-transform duration-300" />
                     <img id="sprite-bob" src="./bob.jpg" alt="Bob" onerror="this.src='https://placehold.co/400x600/blue/white?text=Bob'" class="h-full w-auto object-contain rounded-xl shadow-lg transition-transform duration-300" />
-                    <img id="sprite-amy" src="./image_44fc01.jpg" alt="Amy" onerror="this.src='https://placehold.co/400x600/pink/white?text=Amy'" class="h-full w-auto object-contain rounded-xl shadow-lg transition-opacity duration-300 hidden" />
+                    <img id="sprite-amy" src="./image_44fc01.jpg" alt="Amy" onerror="this.src='https://placehold.co/400x600/pink/white?text=Amy'" class="h-full w-auto object-contain rounded-xl shadow-lg transition-opacity duration-300" />
                 </div>
             </div>
 
@@ -977,21 +982,28 @@
             if (currentRoute === 'siblings') {
                 // Show only Janet + Bob initially, then add Amy when she speaks.
                 spriteImg.classList.add('hidden');
-                siblingsSprites.classList.remove('hidden');
+                siblingsSprites.style.display = 'flex';
 
                 const janet = document.getElementById('sprite-janet');
                 const bob = document.getElementById('sprite-bob');
                 const amy = document.getElementById('sprite-amy');
 
-                janet.classList.remove('hidden');
-                bob.classList.remove('hidden');
+                // Ensure images are reloaded (fixes cases where the src wasn't applied)
+                janet.src = "./janet.jpg";
+                bob.src = "./bob.jpg";
+                amy.src = "./image_44fc01.jpg";
+
+                janet.style.display = 'block';
+                bob.style.display = 'block';
 
                 const amyDialogue = currentNode === 'siblings_amy_arrival' || currentNode.startsWith('siblings_amy_');
                 if (amyDialogue) {
-                    amy.classList.remove('hidden');
+                    amy.style.display = 'block';
+                    amy.style.opacity = '1';
                     siblingsSprites.classList.add('amy-in');
                 } else {
-                    amy.classList.add('hidden');
+                    amy.style.display = 'none';
+                    amy.style.opacity = '0';
                     siblingsSprites.classList.remove('amy-in');
                 }
 
